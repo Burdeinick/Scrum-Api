@@ -1,6 +1,8 @@
 from flask import Flask, request
 from logic import ServerProcessing
 from logic import UsingDB
+import psycopg2
+
 app = Flask(__name__)
 
 
@@ -13,12 +15,13 @@ def get_all_users():
     us_db = UsingDB() 
     
     if us_db.autefication_users(autenf):
-        # Допустим аутенфик. пройдена сдесь 
- 
+        us_db.connect_db.cursor.execute("SELECT * FROM users")
+        result = us_db.connect_db.cursor.fetchall()
+        print(result)
         return 'Запрос пришел, все в норме'
 
 
-#
+
 
 
 

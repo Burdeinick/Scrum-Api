@@ -1,10 +1,9 @@
 import psycopg2
 from contextlib import closing
 
-dbname = 't_managing_db'
-user = 'alex' 
-password = '0525' 
-host = 'localhost'
+dbname = "t_managing_db"
+user = "alex"
+password = "0525"
 
 
 class ServerProcessing:
@@ -16,15 +15,9 @@ class ServerProcessing:
 class ConnectionDB:
     """ """
     def __init__(self):
-        self.dbname = dbname
-        self.user = user
-        self.password = password
-        self.host = host
+        self.conn = psycopg2.connect(dbname=dbname, user=user, password=password)
+        self.cursor = self.conn.cursor()
 
-    def connect(self):
-        """ """
-        conn = psycopg2.connect(self.dbname, self.user,
-                                self.password, self.host)
 
 
 class UsingDB:
@@ -35,7 +28,8 @@ class UsingDB:
 
     def autefication_users(self, name_secret: tuple) -> bool:
         """ """
-        return
+
+        return True
     
     def get_all_users(self):
         """ This function can get all the users from DB """
