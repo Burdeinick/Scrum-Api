@@ -34,7 +34,7 @@ def board_list():
     requests.post(url, headers=headers)   
 
 def card_create():
-
+    """ Create a card """
     url = r'http://127.0.0.1:5000/api/v1/card/create'
     headers = {"UserName": "Bob", "UserSecret": "1234"}
     data = {
@@ -80,7 +80,7 @@ def colum_info():
             }
     requests.post(url, json=data, headers=headers) 
 
-# get_users()
+get_users()
 # board_create()
 # board_delete()
 # board_list()

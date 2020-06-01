@@ -1,13 +1,35 @@
 from flask import Flask, request
+from logic import ServerProcessing
+from logic import UsingDB
 app = Flask(__name__)
 
 
 @app.route("/api/v1/user/list", methods=['POST'])
 def get_all_users():
     """ Get all users"""
-    print('Запрос пришел, все в норме')
-    print(request.headers)
-    return 'Запрос пришел, все в норме'
+    username = request.headers['UserName']
+    usersecret = request.headers['UserSecret']
+    autenf = (username, usersecret)
+    us_db = UsingDB() 
+    
+    if us_db.autefication_users(autenf):
+        # Допустим аутенфик. пройдена сдесь 
+ 
+        return 'Запрос пришел, все в норме'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 @app.route("/api/v1/board/create", methods=['POST'])
 def board_create():
