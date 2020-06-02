@@ -2,7 +2,6 @@ from flask import Flask, request
 from logic import ServerProcessing
 from logic import UsingDB
 import psycopg2
-
 app = Flask(__name__)
 
 
@@ -11,15 +10,17 @@ def get_all_users():
     """ Get all users"""
     username = request.headers['UserName']
     usersecret = request.headers['UserSecret']
-    autenf = (username, usersecret)
-    us_db = UsingDB() 
-    
-    if us_db.autefication_users(autenf):
-        us_db.connect_db.cursor.execute("SELECT * FROM users")
-        result = us_db.connect_db.cursor.fetchall()
-        print(result)
-        return 'Запрос пришел, все в норме'
+    autenf_data = (username, usersecret)
+    us_db = UsingDB()
 
+    if us_db.autefication_users(autenf_data):
+        print('Аутенфикация пройдена', us_db.get_all_users())
+        return us_db.get_all_users()
+
+    else:
+        print({'Authentification': 'Error'})
+        return {'Authentification': 'Error'}
+        
 
 
 
@@ -37,10 +38,40 @@ def get_all_users():
 @app.route("/api/v1/board/create", methods=['POST'])
 def board_create():
     """ For create a snew board"""
-    print('Я буду создавать доски')
-    print(request.headers)
-    print(request.json)
-    return 'Ok'
+    username = request.headers['UserName']
+    usersecret = request.headers['UserSecret']
+    autenf_data = (username, usersecret)
+    data = request.json
+    us_db = UsingDB()
+
+    if us_db.autefication_users(autenf_data):
+        print('Аутенфикация пройдена')
+        us_db.board_create(data)
+        return({'Status': 'A board was created'})
+    else:
+        print({'Authentification': 'Error'})
+        return {'Authentification': 'Error'}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 @app.route("/api/v1/board/delete", methods=['POST'])
 def board_delete():

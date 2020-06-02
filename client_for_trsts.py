@@ -1,10 +1,14 @@
 import requests
 
+
 def get_users():
     """ For testing geting all users"""
     url = r'http://127.0.0.1:5000/api/v1/user/list'
-    headers = {"UserName": "Bob", "UserSecret": "123"}
+    headers = {"UserName": "Kop", "UserSecret": "456"}
     requests.post(url, headers=headers)
+
+
+
 
 
 
@@ -26,16 +30,37 @@ def get_users():
 def board_create():
     """For board create"""
     url = r'http://127.0.0.1:5000/api/v1/board/create'
-    headers = {"UserName": "Bob", "UserSecret": "1234"}
+    headers = {"UserName": "Bob", "UserSecret": "123"}
     data = {
-        "title": "Доска разработчика",
-        "columns": [
-                    "ToDo",
-                    "InProgress",
-                    "Done"
-                    ]
+            "title": "Доска разработчика",
+            "columns": [
+                        "ToDo",
+                        "InProgress",
+                        "Done"
+                        ]
             }
     requests.post(url, json=data, headers=headers)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 def board_delete():
     """ For board delete"""
@@ -97,16 +122,11 @@ def colum_info():
             }
     requests.post(url, json=data, headers=headers) 
 
-get_users()
-# board_create()
+# get_users()
+board_create()
 # board_delete()
 # board_list()
 # card_create()
 # card_update()
 # card_delete()
 # colum_info()
-
-
-
-
-#
