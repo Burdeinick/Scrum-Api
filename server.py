@@ -1,5 +1,4 @@
 from flask import Flask, request
-from logic import ServerProcessing
 from logic import UsingDB
 import psycopg2
 app = Flask(__name__)
@@ -46,7 +45,7 @@ def board_create():
 
     if us_db.autefication_users(autenf_data):
         print('Аутенфикация пройдена')
-        us_db.board_create(data)
+        us_db.create_new_board(data, username)
         return({'Status': 'A board was created'})
     else:
         print({'Authentification': 'Error'})
