@@ -1,5 +1,6 @@
 from flask import Flask, request
 from logic import UsingDB
+from logic import Statuses
 import psycopg2
 app = Flask(__name__)
 
@@ -19,21 +20,20 @@ def get_all_users():
     else:
         print({'Authentification': 'Error'})
         return {'Authentification': 'Error'}
+
+
+
+
+
+
+
+
+
+
+
+
+
         
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 @app.route("/api/v1/board/create", methods=['POST'])
 def board_create():
     """ For create a snew board"""
@@ -42,19 +42,26 @@ def board_create():
     autenf_data = (username, usersecret)
     data = request.json
     us_db = UsingDB()
+    statuses = Statuses()
 
     if us_db.autefication_users(autenf_data):
         print('Аутенфикация пройдена')
-        us_db.create_new_board(data, username)
-        return({'Status': 'A board was created'})
+
+        if (us_db.create_new_board(data, username)) == statuses.new_board_create:
+            print('Serv 1', {"status": "The board was created"})
+            return statuses.such_board_exists
+
+        if (us_db.create_new_board(data, username)) == statuses.such_board_exists:
+            print('Serv 2', {"status": "This a board already exist"})
+            return statuses.such_board_exists
+
+        if (us_db.create_new_board(data, username)) == statuses.new_board_dont_create :   
+            print('Serv 3', {"status": "The new board was don't created"})
+            return statuses.new_board_dont_create
+
     else:
         print({'Authentification': 'Error'})
-        return {'Authentification': 'Error'}
-
-
-
-
-
+        return statuses
 
 
 
@@ -78,6 +85,27 @@ def board_delete():
     print(request.json)
     return 'Ok'
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 @app.route("/api/v1/board/list", methods=['POST'])
 def board_list():
     """ Get all boards"""
@@ -93,13 +121,13 @@ def card_create():
 @app.route("/api/v1/card/update", methods=['POST'])
 def card_update():
     """ For update a card"""
-    print(request.json)
+    print( request.json)
     return 'Ok'
 
 @app.route("/api/v1/card/delete", methods=['POST'])
 def card_delete():
     """ For delete a card"""
-    print(request.json)
+    print( request.json)
     return 'Ok'
 
 @app.route("/api/v1/report/cards_by_column", methods=['POST'])
