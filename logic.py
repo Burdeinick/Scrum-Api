@@ -158,7 +158,6 @@ class UsingDB:
                          last_updated_by
                         )
 
-
         respons_of_DB_same_title = self.req_DB.request_check_board_avail()  # Проверка на наличие такой доски в БД
         print()
 

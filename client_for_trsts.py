@@ -84,7 +84,7 @@ def colum_info():
 # get_users()
 # board_create()
 # board_delete()
-board_list()
+# board_list()
 # card_create()
 # card_update()
 # card_delete()
