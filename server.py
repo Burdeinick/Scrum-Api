@@ -8,109 +8,67 @@ app = Flask(__name__)
 @app.route("/api/v1/user/list", methods=['POST'])
 def get_all_users():
     """ Get all users"""
-    username = request.headers['UserName']
-    usersecret = request.headers['UserSecret']
-    autenf_data = (username, usersecret)
     us_db = UsingDB()
+    username = str(request.headers['UserName'])
+    usersecret = str(request.headers['UserSecret'])
+    autenf_data = (username, usersecret)
 
     if us_db.autefication_users(autenf_data):
-        print('Аутенфикация пройдена', us_db.get_all_users())
         return us_db.get_all_users()
-
     else:
         print({'Authentification': 'Error'})
         return {'Authentification': 'Error'}
 
-
-
-
-
-
-
-
-
-
-
-
-
-        
 @app.route("/api/v1/board/create", methods=['POST'])
 def board_create():
     """ For create a snew board"""
-    username = request.headers['UserName']
-    usersecret = request.headers['UserSecret']
-    autenf_data = (username, usersecret)
-    data = request.json
     us_db = UsingDB()
     statuses = Statuses()
-
+    data = request.json
+    username = str(request.headers['UserName'])
+    usersecret = str(request.headers['UserSecret'])
+    autenf_data = (username, usersecret)
+    
     if us_db.autefication_users(autenf_data):
         print('Аутенфикация пройдена')
-
-        if (us_db.create_new_board(data, username)) == statuses.new_board_create:
-            print('Serv 1', {"status": "The board was created"})
-            return statuses.such_board_exists
-
-        if (us_db.create_new_board(data, username)) == statuses.such_board_exists:
-            print('Serv 2', {"status": "This a board already exist"})
-            return statuses.such_board_exists
-
-        if (us_db.create_new_board(data, username)) == statuses.new_board_dont_create :   
-            print('Serv 3', {"status": "The new board was don't created"})
-            return statuses.new_board_dont_create
-
+        return us_db.create_new_board(data, username)
     else:
         print({'Authentification': 'Error'})
-        return statuses
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        return statuses.authentif_error
 
 @app.route("/api/v1/board/delete", methods=['POST'])
 def board_delete():
     """ For delete board"""
-    print(request.json)
-    return 'Ok'
+    us_db = UsingDB()
+    statuses = Statuses()
+    data = request.json
+    username = str(request.headers['UserName'])
+    usersecret = str(request.headers['UserSecret'])
+    autenf_data = (username, usersecret)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    if us_db.autefication_users(autenf_data):
+        print('Аутенфикация пройдена')
+        return us_db.delete_board(data)
+    else:
+        print({'Authentification': 'Error'})
+        return statuses.authentif_error
 
 @app.route("/api/v1/board/list", methods=['POST'])
 def board_list():
     """ Get all boards"""
-    print(request.headers)
-    return 'ok'
+    us_db = UsingDB()
+    statuses = Statuses()
+    username = str(request.headers['UserName'])
+    usersecret = str(request.headers['UserSecret'])
+    autenf_data = (username, usersecret)
+
+    if us_db.autefication_users(autenf_data):
+        print('Аутенфикация пройдена')
+        return us_db.get_all_boars()
+        
+    else:
+        print({'Authentification': 'Error'})
+        return statuses.authentif_error
 
 @app.route("/api/v1/card/create", methods=['POST'])
 def card_create():

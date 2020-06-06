@@ -1,19 +1,25 @@
 import psycopg2
 from contextlib import closing
 import time
+from datetime import datetime
 
 dbname = "t_managing_db"
-user = "alex"
+user = "postgres"
 password = "0525"
 
 
 class Statuses:
     """ """
     def __init__(self):
+        self.authentif_error = {"Authentification": "Error"}
         self.such_board_exists = {"status": "This a board already exist"}
         self.new_board_create = {"status": "The board was created"}
         self.new_board_dont_create = {"status": "The new board was don't created"}
-        self.authentif_error = {"Authentification": "Error"}
+        self.board_delete = {"status": "The board was delete"}
+        self.board_dont_delete = {"status": "The board was don't delete"}
+        self.board_doesnot_exist = {"status": "This a board does not exist"}
+        self.boards_donot_exist = {"Status": "A boards don't exist"}
+
 
 class ConnectionDB:
     """ """
@@ -66,16 +72,39 @@ class RequestsDB:
         self.connect_db.conn.commit()
 
         if self.connect_db.cursor.statusmessage == "INSERT 0 1":
-            return self.statuses.new_board_create
-        return self.statuses.new_board_dont_create
+            return True
+        return False
 
     def request_check_board_avail(self):
         request = f"SELECT title    \
                     FROM boards"
 
         self.connect_db.cursor.execute(request)                                       
+        return self.connect_db.cursor.fetchall()
+
+    def request_delete_board(self, title: str):
+        """ """
+        request = f"DELETE FROM boards    \
+                    WHERE title='{title}';"
+
+        self.connect_db.cursor.execute(request)                                       
         self.connect_db.conn.commit()
 
+        if self.connect_db.cursor.statusmessage == "DELETE 1":
+            return True
+        return False
+
+    def request_get_all_boards(self):
+        """ """
+        request = f"SELECT title,               \
+                            columns,            \
+                            created_at,         \
+                            created_by,         \
+                            last_updated_at,    \
+                            last_updated_by     \
+                    FROM boards"
+
+        self.connect_db.cursor.execute(request)                                       
         return self.connect_db.cursor.fetchall()
 
 
@@ -87,12 +116,11 @@ class UsingDB:
         self.statuses = Statuses()
 
     def autefication_users(self, name_secret: tuple) -> bool:
-        """ For authentification of the users  """
+        """ For authentification of the users """
         username = name_secret[0]
         usersecret = name_secret[1]
         
         respons_of_DB = self.req_DB.request_get_all_users()
-        # print('Я в autefication_users', respons_of_DB)
         for step in respons_of_DB:
             if username == step[0]:
                 if usersecret == step[1]:
@@ -109,16 +137,17 @@ class UsingDB:
 
         for step in respons_of_DB:
             respons_to_serv["users"].append({"username": step[0]})
+            print(respons_to_serv)
         return respons_to_serv
 
     def create_new_board(self, data: dict, username: str):
         """ For create a new board """
-        title = data["title"]
-        colums = ' '.join(data["columns"])
-        created_at = time.time()
-        created_by = username
-        last_updated_at =  time.time()
-        last_updated_by = username
+        title = str(data["title"])
+        colums = str(' '.join(data["columns"]))
+        created_at = str(int(time.time()))
+        created_by = str(username)
+        last_updated_at =  str(int(time.time()))
+        last_updated_by = str(username)
 
         collecte_data = (
                          title,
@@ -138,10 +167,64 @@ class UsingDB:
                 print('1', 'Доска не создалась!', {"status": "This a board already exist"})
                 return self.statuses.such_board_exists
 
-            if self.req_DB.request_create_new_board(collecte_data):
-                print('2', {"status": "The board was created"})
-                return self.statuses.such_board_exists
+        if self.req_DB.request_create_new_board(collecte_data):
+            print('2', {"status": "The board was created"})
+            return self.statuses.new_board_create
 
         print('3', {"status": "The new board was don't created"})
         return self.statuses.new_board_dont_create
         
+    def delete_board(self, data: dict):
+        """ """
+        title = str(data["title"])
+
+        respons_of_DB_board_avai = self.req_DB.request_check_board_avail()
+        print(respons_of_DB_board_avai)
+        for title_in_DB in respons_of_DB_board_avai:
+            if title_in_DB[0] ==  title:
+                print('Доска найдена, отправлю запрос на удаление такой доски!')
+
+                if self.req_DB.request_delete_board(title):
+                    print('Доска удалена')
+                    return self.statuses.board_delete
+
+                if not self.req_DB.request_delete_board(title): 
+                    print('Доска не удалена')
+                    return self.statuses.board_dont_delete
+        print('Доска не удалена', {"status": "This a board does not exist"})
+        return self.statuses.board_doesnot_exist
+
+    def get_all_boars(self):
+        """ This function can get all the boards from DB"""
+        respons_of_DB_exist_board = self.req_DB.request_check_board_avail()
+        print("Я в get_all_boars", respons_of_DB_exist_board)
+        if respons_of_DB_exist_board == []:
+            print('Список пуст, досок нет')
+            return self.statuses.boards_donot_exist
+            
+        if len(respons_of_DB_exist_board) >= 1:
+            print('Список полон')
+            print(self.req_DB.request_get_all_boards())
+            response_to_serv = {
+                                "count": None, 
+                                "boards": []    
+                                }
+            for step_tuple in self.req_DB.request_get_all_boards():
+                count = str(len(respons_of_DB_exist_board))
+                board = str(step_tuple[0])
+                created_at = str(datetime.fromtimestamp(int(step_tuple[2])))  # Переделать чтобы при создании таблицы boards эта колонка была int
+                created_by = str(step_tuple[3])
+                last_updated_at = str(datetime.fromtimestamp(int(step_tuple[4])))
+                last_updated_by = str(step_tuple[5])
+                d_board = {}
+                d_board["board"] = board
+                d_board["created_at"] = created_at
+                d_board["created_by"] = created_by
+                d_board["last_updated_at"] = last_updated_at
+                d_board["last_updated_by"] = last_updated_by
+
+                response_to_serv["count"] = count
+                response_to_serv["boards"].append(d_board)
+
+            print(f"Отправил {response_to_serv}")
+            return response_to_serv

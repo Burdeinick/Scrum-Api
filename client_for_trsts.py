@@ -7,30 +7,10 @@ def get_users():
     headers = {"UserName": "Kop", "UserSecret": "456"}
     requests.post(url, headers=headers)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 def board_create():
     """For board create"""
     url = r'http://127.0.0.1:5000/api/v1/board/create'
-    headers = {"UserName": "Bob", "UserSecret": "123"}
+    headers = {"UserName": "Kop", "UserSecret": "456"}
     data = {
             "title": "Доска разработчика",
             "columns": [
@@ -41,38 +21,17 @@ def board_create():
             }
     requests.post(url, json=data, headers=headers)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 def board_delete():
     """ For board delete"""
     url = r'http://127.0.0.1:5000/api/v1/board/delete'
-    headers = {"UserName": "Bob", "UserSecret": "1234"}
-    data = {"title": "Доска разработчика"}
+    headers = {"UserName": "Kop", "UserSecret": "456"}
+    data = {"title": "Новая доска"}
     requests.post(url, json=data, headers=headers)
 
 def board_list():
     """ Get all boards """
     url = r'http://127.0.0.1:5000/api/v1/board/list'
-    headers = {"UserName": "Bob", "UserSecret": "1234"}
+    headers = {"UserName": "Kop", "UserSecret": "456"}
     requests.post(url, headers=headers)   
 
 def card_create():
@@ -123,9 +82,9 @@ def colum_info():
     requests.post(url, json=data, headers=headers) 
 
 # get_users()
-board_create()
+# board_create()
 # board_delete()
-# board_list()
+board_list()
 # card_create()
 # card_update()
 # card_delete()
