@@ -73,14 +73,91 @@ def board_list():
 @app.route("/api/v1/card/create", methods=['POST'])
 def card_create():
     """ For cread a new card"""
-    print(request.json)
-    return 'Ok'
+    us_db = UsingDB()
+    statuses = Statuses()
+    data = request.json
+    username = str(request.headers['UserName'])
+    usersecret = str(request.headers['UserSecret'])
+    autenf_data = (username, usersecret)
+
+    if us_db.autefication_users(autenf_data):
+        print('Аутенфикация пройдена')
+        return us_db.create_new_cards(data, username)
+
+    else:
+        print({'Authentification': 'Error'})
+        return statuses.authentif_error
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 @app.route("/api/v1/card/update", methods=['POST'])
 def card_update():
     """ For update a card"""
-    print( request.json)
-    return 'Ok'
+    us_db = UsingDB()
+    statuses = Statuses()
+    data = request.json
+    username = str(request.headers['UserName'])
+    usersecret = str(request.headers['UserSecret'])
+    autenf_data = (username, usersecret)
+
+    if us_db.autefication_users(autenf_data):
+        print('Аутенфикация пройдена')
+        return us_db.update_card(data, username)
+
+    else:
+        print({'Authentification': 'Error'})
+        return statuses.authentif_error
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 @app.route("/api/v1/card/delete", methods=['POST'])
 def card_delete():

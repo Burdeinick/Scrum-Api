@@ -25,7 +25,7 @@ def board_delete():
     """ For board delete"""
     url = r'http://127.0.0.1:5000/api/v1/board/delete'
     headers = {"UserName": "Kop", "UserSecret": "456"}
-    data = {"title": "Новая доска"}
+    data = {"title": "Доска разработчика"}
     requests.post(url, json=data, headers=headers)
 
 def board_list():
@@ -37,7 +37,7 @@ def board_list():
 def card_create():
     """ Create a card """
     url = r'http://127.0.0.1:5000/api/v1/card/create'
-    headers = {"UserName": "Bob", "UserSecret": "1234"}
+    headers = {"UserName": "Bob", "UserSecret": "123"}
     data = {
             "title": "Развернуть PostgreSQL",
             "board": "Доска разработчика",
@@ -48,16 +48,83 @@ def card_create():
             }
     requests.post(url, json=data, headers=headers) 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 def card_update():
     """ For update a card"""
     url = r'http://127.0.0.1:5000/api/v1/card/update'
-    headers = {"UserName": "Bob", "UserSecret": "1234"}
+    headers = {"UserName": "Bob", "UserSecret": "123"}
     data = {
             "title": "Развернуть PostgreSQL",
             "board": "Доска разработчика",
             "status": "Done"
             }
     requests.post(url, json=data, headers=headers) 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 def card_delete():
     """ For delete a card"""
@@ -84,8 +151,8 @@ def colum_info():
 # get_users()
 # board_create()
 # board_delete()
-board_list()
-# card_create()
+# board_list()
+card_create()
 # card_update()
 # card_delete()
 # colum_info()
