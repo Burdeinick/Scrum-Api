@@ -342,6 +342,7 @@ class UsingDB:
                 created_by = str(step_tuple[3])
                 last_updated_at = str(datetime.fromtimestamp(int(step_tuple[4])))
                 last_updated_by = str(step_tuple[5])
+
                 d_board = {}
                 d_board["board"] = board
                 d_board["created_at"] = created_at
@@ -415,11 +416,12 @@ class UsingDB:
         """For update a card."""
         title = data["title"]
         board = data["board"]
+
         status = data.get("status")
         description = data.get("description")
         assignee = data.get("assignee")
         estimation = data.get("estimation")
-
+  
         # collecte_data = (
         #                  title,
         #                  board,
@@ -429,13 +431,35 @@ class UsingDB:
         #                  estimation
         #                 )
 
-        response_DB_card_str = self.req_DB.request_get_title_board_for_card()
+        # response_DB_card_str = self.req_DB.request_get_title_board_for_card() ??? надо ли
+        
+        # сделать запрос с конкретным where title LIKE и тд.
 
-        d_to_update = {}
+        lst_update = (title, board)
 
-        for str_card in response_DB_card_str:
-            
+        if status != None:
+            lst_update.append(status)
+        else:
+            lst_update.append(#)
 
+        if description != None:
+            lst_update.append(description)
+        else:
+            lst_update.append(#)
 
+        if assignee != None:
+            lst_update.append(assignee)
+        else:
+            lst_update.append(#)   
+
+        if estimation != None:
+            lst_update.append(estimation)
+        else:
+            lst_update.append(#)   
+
+        lst_update.append(#)
+        lst_update.append(#)
+        lst_update.append(int(time.time))
+        lst_update.append(username)
 
         
