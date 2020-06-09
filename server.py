@@ -2,174 +2,93 @@ from flask import Flask, request
 from logic import UsingDB
 from logic import Statuses
 import psycopg2
+
 app = Flask(__name__)
 
+def authentific(headers):
+    username = str(request.headers['UserName'])
+    usersecret = str(request.headers['UserSecret'])
+    autenf_data = (username, usersecret)
+    if UsingDB().autefication_users(autenf_data):
+        print('Аутенфикация пройдена')
+        return True
+    print('Аутенфикация НЕ пройдена')
+    return False
 
 @app.route("/api/v1/user/list", methods=['POST'])
 def get_all_users():
-    """ Get all users"""
-    us_db = UsingDB()
-    username = str(request.headers['UserName'])
-    usersecret = str(request.headers['UserSecret'])
-    autenf_data = (username, usersecret)
-
-    if us_db.autefication_users(autenf_data):
-        return us_db.get_all_users()
-    else:
-        print({'Authentification': 'Error'})
-        return {'Authentification': 'Error'}
+    """ Get all users."""
+    if authentific(request.headers):
+        response = UsingDB().get_all_users()
+        print(response)
+        return response
+    return Statuses().aut_error
 
 @app.route("/api/v1/board/create", methods=['POST'])
 def board_create():
-    """ For create a snew board"""
-    us_db = UsingDB()
-    statuses = Statuses()
-    data = request.json
-    username = str(request.headers['UserName'])
-    usersecret = str(request.headers['UserSecret'])
-    autenf_data = (username, usersecret)
-    
-    if us_db.autefication_users(autenf_data):
-        print('Аутенфикация пройдена')
-        return us_db.create_new_board(data, username)
-    else:
-        print({'Authentification': 'Error'})
-        return statuses.authentif_error
+    """ For create a snew board."""
+    if authentific(request.headers):
+        data = request.json
+        username = str(request.headers['UserName'])
+        reponse = UsingDB().create_board(data, username)
+        print(reponse)
+        return reponse
+    return Statuses().aut_error
 
 @app.route("/api/v1/board/delete", methods=['POST'])
 def board_delete():
-    """ For delete board"""
-    us_db = UsingDB()
-    statuses = Statuses()
-    data = request.json
-    username = str(request.headers['UserName'])
-    usersecret = str(request.headers['UserSecret'])
-    autenf_data = (username, usersecret)
-
-    if us_db.autefication_users(autenf_data):
-        print('Аутенфикация пройдена')
-        return us_db.delete_board(data)
-    else:
-        print({'Authentification': 'Error'})
-        return statuses.authentif_error
+    """ For delete board."""
+    if authentific(request.headers):
+        data = request.json
+        return UsingDB().delete_board(data)
+    return Statuses().aut_error
 
 @app.route("/api/v1/board/list", methods=['POST'])
 def board_list():
-    """ Get all boards"""
-    us_db = UsingDB()
-    statuses = Statuses()
-    username = str(request.headers['UserName'])
-    usersecret = str(request.headers['UserSecret'])
-    autenf_data = (username, usersecret)
-
-    if us_db.autefication_users(autenf_data):
-        print('Аутенфикация пройдена')
-        return us_db.get_all_boars()
-        
-    else:
-        print({'Authentification': 'Error'})
-        return statuses.authentif_error
+    """ Get all boards."""
+    if authentific(request.headers):
+        return UsingDB().get_all_boars()
+    return Statuses().aut_error
 
 @app.route("/api/v1/card/create", methods=['POST'])
 def card_create():
-    """ For cread a new card"""
-    us_db = UsingDB()
-    statuses = Statuses()
-    data = request.json
-    username = str(request.headers['UserName'])
-    usersecret = str(request.headers['UserSecret'])
-    autenf_data = (username, usersecret)
-
-    if us_db.autefication_users(autenf_data):
-        print('Аутенфикация пройдена')
-        return us_db.create_new_cards(data, username)
-
-    else:
-        print({'Authentification': 'Error'})
-        return statuses.authentif_error
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    """ For cread a new card."""
+    if authentific(request.headers):
+        username = str(request.headers['UserName'])
+        data = request.json
+        return UsingDB().create_cards(data, username)
+    return Statuses().aut_error
 
 @app.route("/api/v1/card/update", methods=['POST'])
 def card_update():
     """ For update a card"""
-    us_db = UsingDB()
-    statuses = Statuses()
-    data = request.json
-    username = str(request.headers['UserName'])
-    usersecret = str(request.headers['UserSecret'])
-    autenf_data = (username, usersecret)
-
-    if us_db.autefication_users(autenf_data):
-        print('Аутенфикация пройдена')
-        return us_db.update_card(data, username)
-
-    else:
-        print({'Authentification': 'Error'})
-        return statuses.authentif_error
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    if authentific(request.headers):
+        username = str(request.headers['UserName'])
+        data = request.json
+        response = UsingDB().update_card(data, username)
+        print(response)
+        return response
+    return Statuses().aut_error
 
 @app.route("/api/v1/card/delete", methods=['POST'])
 def card_delete():
     """ For delete a card"""
-    print( request.json)
-    return 'Ok'
+    if authentific(request.headers):
+        data = request.json
+        response = UsingDB().card_delete(data)
+        print(response)
+        return response
+    return Statuses().aut_error
 
 @app.route("/api/v1/report/cards_by_column", methods=['POST'])
 def colum_info():
     """ Get info about a task"""
-    print(request.json)
-    return 'Ok'
+    if authentific(request.headers):
+        data = request.json
+        response = UsingDB().column_info(data)
+        print(response)
+        return response
+    return Statuses().aut_error
 
 
 if __name__ == "__main__":
