@@ -11,7 +11,8 @@ password = "0525"
 class Statuses:
     """The statuses of answers is here."""
     def __init__(self):
-        self.aut_error = {"Authentification": "Error."}
+        self.aut_error = {"status":"Authentification Error."}
+        self.user_no_avaib = {"status": "No users available"} 
         self.such_board_exists = {"status": "This a board already exist."}
         self.board_create = {"status": "The board was created."}
         self.board_not_create = {"status": "The new board was don't created."}
@@ -50,7 +51,31 @@ class RequestsDB:
         self.connect_db.cursor.execute("SELECT username, password FROM users")
         return self.connect_db.cursor.fetchall()
 
-    def request_create_new_board(self, collecte_data: tuple) -> bool:
+
+
+
+
+
+
+
+    def request_one_user(self, username: str, usersecret: str ) -> list:
+        """ """
+        request = f"SELECT username  \
+                    FROM users \
+                    WHERE (username='{username}') AND (password='{usersecret}')"
+
+        self.connect_db.cursor.execute(request)
+        return self.connect_db.cursor.fetchall()
+
+
+
+
+
+
+
+
+
+    def request_create_board(self, collecte_data: tuple) -> bool:
         """ The function for requests to DB for adding new board in "boards" table. """
         title = collecte_data[0]
         columns = collecte_data[1]
@@ -108,11 +133,11 @@ class RequestsDB:
 
 
 
-    def request_one_board(self, board):
-        """ """
+    def request_one_board(self, title: str) -> list:
+        """For checking this board."""
         request = f"SELECT title    \
                     FROM boards \
-                    WHERE title='{board}'"
+                    WHERE title='{title}'"
 
         self.connect_db.cursor.execute(request)                                       
         return self.connect_db.cursor.fetchall()
@@ -316,20 +341,92 @@ class UsingDB:
         self.req_DB = RequestsDB()
         self.stat = Statuses()
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # Переделать для поиска конкретного пользователя пользователя в БД
 
     def autefication_users(self, name_secret: tuple) -> bool:
         """ For authentification of the users """
         username = name_secret[0]
         usersecret = name_secret[1]
-        
-        respons_of_DB = self.req_DB.request_get_all_users()
-        for step in respons_of_DB:
-            if username == step[0]:
-                if usersecret == step[1]:
-                    return True 
-                else:      
-                    return False
+        respons_db = self.req_DB.request_one_user(username, usersecret)
+        if respons_db:
+            return True
+        return False
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -338,18 +435,19 @@ class UsingDB:
     def get_all_users(self) -> dict:
         """This function can get all the users from DB."""
         respons_to_serv = {"users": []}
-        respons_of_DB = self.req_DB.request_get_all_users()
-        for step in respons_of_DB:
-            respons_to_serv["users"].append({"username": step[0]})
+        respons_db = self.req_DB.request_get_all_users()
+        if not respons_db:
+            return self.stat.user_no_avaib
+
+        for step in respons_db:
+            username = step[0]
+            respons_to_serv["users"].append({"username": username})
         return respons_to_serv
 
 
-
-
-
-
-    def create_board(self, data: dict, username: str):
+    def create_board(self, data: dict, head: dict) -> dict:
         """For create a new board."""
+        username = str(head['UserName'])
         title = str(data["title"])
         colums = str(' '.join(data["columns"]))
         created_at = str(int(time.time()))
@@ -366,20 +464,14 @@ class UsingDB:
                          last_updated_by
                         )
 
-        respons_of_DB = self.req_DB.request_check_board_avail()  # Проверка на наличие такой доски в БД
+        resp_db = self.req_DB.request_one_board(title)
+        if resp_db:
+            return self.stat.such_board_exists
 
-        for title_in_DB in respons_of_DB:
-            if title_in_DB[0] ==  title:
-                print('1', 'Доска не создалась!', {"status": "This a board already exist"})
-                return self.stat.such_board_exists
-
-        if self.req_DB.request_create_new_board(collecte_data):
-            print('2', {"status": "The board was created"})
+        if self.req_DB.request_create_board(collecte_data):
             return self.stat.board_create
-
-        print('3', {"status": "The new board was don't created"})
         return self.stat.board_not_create
-        
+
     def delete_board(self, data: dict):
         """For delete the board."""
         title = str(data["title"])

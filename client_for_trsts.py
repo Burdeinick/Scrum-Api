@@ -12,7 +12,7 @@ def board_create():
     url = r'http://127.0.0.1:5000/api/v1/board/create'
     headers = {"UserName": "Kop", "UserSecret": "456"}
     data = {
-            "title": "Доска разработчика 4",
+            "title": "Доска разработчика",
             "columns": [
                         "ToDo",
                         "InProgress",
