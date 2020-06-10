@@ -5,33 +5,18 @@ import psycopg2
 
 app = Flask(__name__)
 
-def authentific(headers):
+def authentific(headers: dict) -> bool:
     username = str(request.headers['UserName'])
     usersecret = str(request.headers['UserSecret'])
     autenf_data = (username, usersecret)
     if UsingDB().autefication_users(autenf_data):
-        print(f'Пользователь {username} прошел аутентификацию.')
+        print(f"Пользователь '{username}' прошел аутентификацию.")
         return True
-    print(f'Пользователь {username} не прошел аутентификацию.')
+    print(f"Пользователь '{username}' не прошел аутентификацию.")
     return False
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 @app.route("/api/v1/user/list", methods=['POST'])
-def get_all_users():
+def get_all_users() -> dict:
     """Get all users."""
     if authentific(request.headers):
         response = UsingDB().get_all_users()
@@ -40,7 +25,7 @@ def get_all_users():
     return Statuses().aut_error
 
 @app.route("/api/v1/board/create", methods=['POST'])
-def board_create():
+def board_create() -> dict:
     """For create a snew board."""
     if authentific(request.headers):
         data = request.json
@@ -51,42 +36,48 @@ def board_create():
     return Statuses().aut_error
 
 @app.route("/api/v1/board/delete", methods=['POST'])
-def board_delete():
+def board_delete() -> dict:
     """For delete board."""
     if authentific(request.headers):
         data = request.json
-        return UsingDB().delete_board(data)
+        response = UsingDB().delete_board(data)
+        print(response)
+        return response
     return Statuses().aut_error
 
 @app.route("/api/v1/board/list", methods=['POST'])
-def board_list():
+def board_list() -> dict:
     """Get all boards."""
     if authentific(request.headers):
-        return UsingDB().get_all_boars()
+        response = UsingDB().get_all_boars()
+        print(response)
+        return response
     return Statuses().aut_error
 
 @app.route("/api/v1/card/create", methods=['POST'])
-def card_create():
+def card_create() -> dict:
     """For cread a new card."""
     if authentific(request.headers):
-        username = str(request.headers['UserName'])
         data = request.json
-        return UsingDB().create_cards(data, username)
+        head = request.headers
+        response = UsingDB().create_cards(data, head)
+        print(response)
+        return UsingDB().create_cards(data, head)
     return Statuses().aut_error
 
 @app.route("/api/v1/card/update", methods=['POST'])
-def card_update():
+def card_update() -> dict:
     """For update a card."""
     if authentific(request.headers):
-        username = str(request.headers['UserName'])
         data = request.json
-        response = UsingDB().update_card(data, username)
+        head = request.headers
+        response = UsingDB().update_card(data, head)
         print(response)
         return response
     return Statuses().aut_error
 
 @app.route("/api/v1/card/delete", methods=['POST'])
-def card_delete():
+def card_delete() -> dict:
     """For delete a card."""
     if authentific(request.headers):
         data = request.json
@@ -96,7 +87,7 @@ def card_delete():
     return Statuses().aut_error
 
 @app.route("/api/v1/report/cards_by_column", methods=['POST'])
-def colum_info():
+def colum_info() -> dict:
     """Get info about a task."""
     if authentific(request.headers):
         data = request.json

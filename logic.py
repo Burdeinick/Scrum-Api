@@ -16,19 +16,19 @@ class Statuses:
         self.such_board_exists = {"status": "This a board already exist."}
         self.board_create = {"status": "The board was created."}
         self.board_not_create = {"status": "The new board was don't created."}
-        self.board_delete = {"status": "The board was delete."}
+        self.board_delete = {"status": "The board removed."}
         self.board_not_delete = {"status": "The board was don't delete."}
         self.board_not_exist = {"status": "This a board does not exist."}
         self.boards_not_exist = {"Status": "A boards don't exist."}
-        self.such_card_exist = {"status": "This a card already exist на данной доске."}
-        self.card_create = {"status": "The card was created."}
+        self.such_card_exist = {"status": "This a card already exist at this board."}
+        self.card_create = {"status": "The card created."}
         self.card_not_create = {"status": "The new card was don't created."}
         self.card_not_create_board = {"status": "The new card was don't created, such board no exist."}
-        self.card_not_update_disc = {"status": "The card has not been updated."}
+        self.card_not_match = {"status": "The 'Board' and the 'title' have not match."}
         self.card_update = {"status": "The card has updated."}
         self.card_not_update = {"status": "The card has not been updated."}
         self.card_not_exist = {"status": "The card does not exist."}
-        self.card_delete = {"status": "The card has delete."}
+        self.card_delete = {"status": "The card removed."}
         self.card_not_delete = {"status": "The card has not been deleted."}
         self.colum_not_info = {"status": "The information about these columns are absent."}
 
@@ -47,36 +47,20 @@ class RequestsDB:
         self.stat = Statuses()
 
     def request_get_all_users(self) -> list:
-        """ """
-        self.connect_db.cursor.execute("SELECT username, password FROM users")
+        """This function returning of list all the users."""
+        self.connect_db.cursor.execute("SELECT username FROM users")
         return self.connect_db.cursor.fetchall()
 
-
-
-
-
-
-
-
-    def request_one_user(self, username: str, usersecret: str ) -> list:
-        """ """
+    def request_authen_user(self, username: str, usersecret: str ) -> list:
+        """This function checking authentification user."""
         request = f"SELECT username  \
                     FROM users \
                     WHERE (username='{username}') AND (password='{usersecret}')"
-
         self.connect_db.cursor.execute(request)
         return self.connect_db.cursor.fetchall()
 
-
-
-
-
-
-
-
-
     def request_create_board(self, collecte_data: tuple) -> bool:
-        """ The function for requests to DB for adding new board in "boards" table. """
+        """The function for requests to DB for adding new board in "boards" table."""
         title = collecte_data[0]
         columns = collecte_data[1]
         created_at = collecte_data[2]
@@ -84,21 +68,21 @@ class RequestsDB:
         last_updated_at = collecte_data[4]
         last_updated_by = collecte_data[5]
 
-        request = f"INSERT INTO boards( \
-                                        title,\
-                                        columns,\
-                                        created_at,\
-                                        created_by,\
-                                        last_updated_at,\
-                                        last_updated_by\
-                                        )\
-                    values(                       \
-                            '{title}',            \
-                            '{columns}',          \
-                            '{created_at}',       \
-                            '{created_by}',       \
-                            '{last_updated_at}',  \
-                            '{last_updated_by}'   \
+        request = f"INSERT INTO boards(                  \
+                                        title,           \
+                                        columns,         \
+                                        created_at       \
+                                        created_by,      \
+                                        last_updated_at, \
+                                        last_updated_by  \
+                                        )                \
+                    values(                         \
+                            '{title}',              \
+                            '{columns}',            \
+                            '{created_at}',         \
+                            '{created_by}',         \
+                            '{last_updated_at}',    \
+                            '{last_updated_by}'     \
                             );"
 
         self.connect_db.cursor.execute(request)                                       
@@ -107,77 +91,27 @@ class RequestsDB:
             return True
         return False
 
-    def request_check_board_avail(self):
-        """ """
-        request = f"SELECT title    \
-                    FROM boards"
-
-        self.connect_db.cursor.execute(request)                                       
-        return self.connect_db.cursor.fetchall()
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     def request_one_board(self, title: str) -> list:
         """For checking this board."""
-        request = f"SELECT title    \
-                    FROM boards \
+        request = f"SELECT title  \
+                    FROM boards  \
                     WHERE title='{title}'"
 
         self.connect_db.cursor.execute(request)                                       
         return self.connect_db.cursor.fetchall()
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     def request_delete_board(self, title: str):
         """ """
         request = f"DELETE FROM boards    \
                     WHERE title='{title}';"
-
         self.connect_db.cursor.execute(request)                                       
         self.connect_db.conn.commit()
-
         if self.connect_db.cursor.statusmessage == "DELETE 1":
             return True
         return False
 
     def request_get_all_boards(self) -> list:
-        """ """
+        """This function returns list of the boards."""
         request = f"SELECT title,               \
                             columns,            \
                             created_at,         \
@@ -185,29 +119,28 @@ class RequestsDB:
                             last_updated_at,    \
                             last_updated_by     \
                     FROM boards"
-
         self.connect_db.cursor.execute(request)                                       
         return self.connect_db.cursor.fetchall()
 
-    def request_get_title_board_for_card(self):
-        """ """
-        request = f"SELECT title, \
-                            board, \
-                            status, \
-                            description, \
-                            assignee, \
-                            estimation, \
-                            created_at, \
-                            created_by, \
-                            last_updated_at, \
-                            last_updated_by \
-                    FROM cards"
-
+    def request_title_board(self, title: str, board: str) -> list:
+        """The function checking 'title' and 'board' in one string."""
+        request = f"SELECT title,               \
+                            board,              \
+                            status,             \
+                            description,        \
+                            assignee,           \
+                            estimation,         \
+                            created_at,         \
+                            created_by,         \
+                            last_updated_at,    \
+                            last_updated_by     \
+                    FROM cards                  \
+                    WHERE (title='{title}') AND (board='{board}')"
         self.connect_db.cursor.execute(request)                                       
         return self.connect_db.cursor.fetchall()
 
     def request_create_card(self, collecte_data: tuple) -> bool:
-        """ """
+        """The function for creating a card."""
         title = collecte_data[0]
         board = collecte_data[1]
         status = collecte_data[2]
@@ -219,30 +152,30 @@ class RequestsDB:
         last_updated_at = collecte_data[8]
         last_updated_by = collecte_data[9]
 
-        request = f"INSERT INTO cards(          \
-                                        title,\
-                                        board,\
-                                        status,\
-                                        description,\
-                                        assignee,\
-                                        estimation,\
-                                        created_at,\
-                                        created_by,\
-                                        last_updated_at,\
-                                        last_updated_by\
-                                        )\
-                    values(  \
-                            '{title}',\
-                            '{board}',\
-                            '{status}',\
-                            '{description}',\
-                            '{assignee}',\
-                            '{estimation}',\
-                            '{created_at}', \
-                            '{created_by}',\
-                            '{last_updated_at}',\
-                            '{last_updated_by}'\
-                            );"
+        request = f"INSERT INTO cards(                      \
+                                        title,              \
+                                        board,              \
+                                        status,             \
+                                        description,        \
+                                        assignee,           \
+                                        estimation,         \
+                                        created_at,         \
+                                        created_by,         \
+                                        last_updated_at,    \
+                                        last_updated_by     \
+                                        )           \
+                    values(                         \
+                            '{title}',              \
+                            '{board}',              \
+                            '{status}',             \
+                            '{description}',        \
+                            '{assignee}',           \
+                            '{estimation}',         \
+                            '{created_at}',         \
+                            '{created_by}',         \
+                            '{last_updated_at}',    \
+                            '{last_updated_by}'     \
+                            )"
 
         self.connect_db.cursor.execute(request)                                       
         self.connect_db.conn.commit()
@@ -251,26 +184,8 @@ class RequestsDB:
             return True
         return False
 
-    def request_str_title_board(self, title, board):
-        """ """ 
-        request = f"SELECT title, \
-                            board, \
-                            status, \
-                            description, \
-                            assignee, \
-                            estimation, \
-                            created_at, \
-                            created_by, \
-                            last_updated_at, \
-                            last_updated_by \
-                    FROM cards \
-                    WHERE(title LIKE '{title}') AND (board LIKE '{board}');"
-
-        self.connect_db.cursor.execute(request)                                       
-        return self.connect_db.cursor.fetchall()        
-
-    def request_card_update(self, collecte_data: list):
-        """ """
+    def request_card_update(self, collecte_data: list) -> bool:
+        """The function for updating a card."""
         title = collecte_data[0]
         board = collecte_data[1]
         status = collecte_data[2]
@@ -281,9 +196,6 @@ class RequestsDB:
         created_by = collecte_data[7]
         last_updated_at = collecte_data[8]
         last_updated_by = collecte_data[9]   
-
-        print(collecte_data)
-
         request = f"UPDATE cards \
                     SET status = '{status}', \
                         description = '{description}', \
@@ -293,7 +205,7 @@ class RequestsDB:
                         created_by = '{created_by}', \
                         last_updated_at = '{last_updated_at}', \
                         last_updated_by = '{last_updated_by}' \
-                        WHERE(title='{title}') AND (board='{board}');"
+                        WHERE(title='{title}') AND (board='{board}')"
 
         self.connect_db.cursor.execute(request)
         self.connect_db.conn.commit()
@@ -302,21 +214,19 @@ class RequestsDB:
             return True
         return False
  
-    def request_card_delete(self, title, board):
-        """ """
+    def request_card_delete(self, title: str, board: str) -> bool:
+        """For request about delete a card."""
         request = f"DELETE FROM cards \
                     WHERE (title='{title}') AND (board='{board}')"
-
         self.connect_db.cursor.execute(request)
         self.connect_db.conn.commit()
         respons = self.connect_db.cursor.statusmessage
-        print(respons)
         if respons == "DELETE 1":
             return True
         return False
 
-    def request_get_info_column(self, board, status, assignee):
-        """ """
+    def request_info_column(self, board: str, status: str, assignee: str) -> list:
+        """For request about the column."""
         request = f"SELECT title, \
                     board, \
                     status, \
@@ -329,7 +239,6 @@ class RequestsDB:
                     last_updated_by \
                     FROM cards \
                     WHERE (board='{board}') AND (status='{status}') AND (assignee='{assignee}');"
-
         self.connect_db.cursor.execute(request)                                       
         return self.connect_db.cursor.fetchall() 
 
@@ -341,96 +250,14 @@ class UsingDB:
         self.req_DB = RequestsDB()
         self.stat = Statuses()
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Переделать для поиска конкретного пользователя пользователя в БД
-
     def autefication_users(self, name_secret: tuple) -> bool:
-        """ For authentification of the users """
+        """For authentification of the users."""
         username = name_secret[0]
         usersecret = name_secret[1]
-        respons_db = self.req_DB.request_one_user(username, usersecret)
+        respons_db = self.req_DB.request_authen_user(username, usersecret)
         if respons_db:
             return True
         return False
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     def get_all_users(self) -> dict:
         """This function can get all the users from DB."""
@@ -438,12 +265,10 @@ class UsingDB:
         respons_db = self.req_DB.request_get_all_users()
         if not respons_db:
             return self.stat.user_no_avaib
-
         for step in respons_db:
             username = step[0]
             respons_to_serv["users"].append({"username": username})
         return respons_to_serv
-
 
     def create_board(self, data: dict, head: dict) -> dict:
         """For create a new board."""
@@ -454,7 +279,6 @@ class UsingDB:
         created_by = str(username)
         last_updated_at =  str(int(time.time()))
         last_updated_by = str(username)
-
         collecte_data = (
                          title,
                          colums,
@@ -463,80 +287,51 @@ class UsingDB:
                          last_updated_at,
                          last_updated_by
                         )
-
         resp_db = self.req_DB.request_one_board(title)
         if resp_db:
             return self.stat.such_board_exists
-
         if self.req_DB.request_create_board(collecte_data):
             return self.stat.board_create
         return self.stat.board_not_create
 
-    def delete_board(self, data: dict):
+    def delete_board(self, data: dict) -> dict:
         """For delete the board."""
         title = str(data["title"])
+        respons_db = self.req_DB.request_one_board(title)
+        if not respons_db:
+            return self.stat.board_not_exist
+        respons_db_del = self.req_DB.request_delete_board(title)   
+        if respons_db_del:
+            return self.stat.board_delete
+        if respons_db_del: 
+            return self.stat.board_not_delete
 
-        respons_of_DB_board_avai = self.req_DB.request_check_board_avail()
-        print(respons_of_DB_board_avai)
-        for title_in_DB in respons_of_DB_board_avai:
-            if title_in_DB[0] ==  title:
-                print('Доска найдена, отправлю запрос на удаление такой доски!')
-
-                if self.req_DB.request_delete_board(title):
-                    print('Доска удалена')
-                    return self.stat.board_delete
-
-                if not self.req_DB.request_delete_board(title): 
-                    print('Доска не удалена')
-                    return self.stat.board_not_delete
-        print('Доска не удалена', {"status": "This a board does not exist"})
-        return self.stat.board_not_exist
-
-    def get_all_boars(self):
-        """ This function can get all the boards from DB"""
-        respons_of_DB_exist_board = self.req_DB.request_check_board_avail()
-        print("Я в get_all_boars", respons_of_DB_exist_board)
-        if respons_of_DB_exist_board == []:
-            print('Список пуст, досок нет')
+    def get_all_boars(self) -> dict:
+        """This function can get all the boards from DB."""
+        respons_db = self.req_DB.request_get_all_boards()
+        if not respons_db:
             return self.stat.boards_not_exist
-            
-        if len(respons_of_DB_exist_board) >= 1:
-            print('Список полон')
-            print(self.req_DB.request_get_all_boards())
-            response_to_serv = {"count": None, "boards": [] }
-            for step_tuple in self.req_DB.request_get_all_boards():
-                count = str(len(respons_of_DB_exist_board))
-                board = str(step_tuple[0])
-                created_at = str(datetime.fromtimestamp(int(step_tuple[2])))  # Переделать чтобы при создании таблицы boards эта колонка была int
-                created_by = str(step_tuple[3])
-                last_updated_at = str(datetime.fromtimestamp(int(step_tuple[4])))
-                last_updated_by = str(step_tuple[5])
+        response_to_serv = {"count": None, "boards": [] }
+        for values in respons_db:
+            count = str(len(respons_db))
+            board = str(values[0])
+            created_at = str(datetime.fromtimestamp(int(values[2])))
+            created_by = str(values[3])
+            last_updated_at = str(datetime.fromtimestamp(int(values[4])))
+            last_updated_by = str(values[5])
+            d_board = {}
+            d_board["board"] = board
+            d_board["created_at"] = created_at
+            d_board["created_by"] = created_by
+            d_board["last_updated_at"] = last_updated_at
+            d_board["last_updated_by"] = last_updated_by
+            response_to_serv["count"] = count
+            response_to_serv["boards"].append(d_board)
+        return response_to_serv
 
-                d_board = {}
-                d_board["board"] = board
-                d_board["created_at"] = created_at
-                d_board["created_by"] = created_by
-                d_board["last_updated_at"] = last_updated_at
-                d_board["last_updated_by"] = last_updated_by
-
-                response_to_serv["count"] = count
-                response_to_serv["boards"].append(d_board)
-
-            print(f"Отправил {response_to_serv}")
-            return response_to_serv
-
-
-
-
-
-
-
-
-
-
-    def create_cards(self, data: dict, username: str):
+    def create_cards(self, data: dict, head: dict) -> dict:
         """For create a new card."""
-        response_to_serv = None
+        username = str(head['UserName'])
         title = data["title"]
         board = data["board"]
         status = data["status"]
@@ -547,7 +342,6 @@ class UsingDB:
         created_by = str(username)
         last_updated_at = int(time.time())
         last_updated_by = str(username)
-
         collecte_data = (
                          title,
                          board,
@@ -559,144 +353,105 @@ class UsingDB:
                          created_by,
                          last_updated_at,
                          last_updated_by,
-                        )
-           
-        respons_one_bord = self.req_DB.request_one_board(board)  # Проверка на наличие доски в БД к которой хотим привязать карточку
-        if not respons_one_bord:
-            print("Карточка не создана, доска с указанным названием в БД не существует")
+                        ) 
+        # проверка существования такой доски 
+        respons_db_board = self.req_DB.request_one_board(board)
+        if not respons_db_board:
             return self.stat.card_not_create_board
-
-        respons_of_DB_card = self.req_DB.request_get_title_board_for_card()  # Проверка на наличие уже существующей такой карточки на указанной доске в БД
-
-        for titl_boar in respons_of_DB_card:
-            title_DB, board_DB = titl_boar[0], titl_boar[1],
-
-            if (title == title_DB) and (board == board_DB):
-                print(f"1 Карточка с названием '{title}'' на доске '{board}' уже существет.")
-                return self.stat.such_card_exist
-
-        if self.req_DB.request_create_card(collecte_data):
-            print('2', {"status": "The card was created"})
-            return self.stat.card_create
-
-        print('3', {"status": "The new card was don't created"})
+        # проверка если есть уже такая карта с такой доской
+        respons_db_card = self.req_DB.request_title_board(title, board)
+        if respons_db_card:
+            return self.stat.such_card_exist
+        # создается доска
+        response_db_create_card = self.req_DB.request_create_card(collecte_data)
+        if response_db_create_card:
+             return self.stat.card_create
         return self.stat.card_not_create
 
-
-
-
-
-
-
-
-
-    def update_card(self, data: dict, username: str) -> dict:
+    def update_card(self, data: dict, head: dict) -> dict:
         """For update a card."""
+        username = str(head['UserName'])
         title = data["title"]
         board = data["board"]
         status = data.get("status")
         description = data.get("description")
         assignee = data.get("assignee")
         estimation = data.get("estimation")
-        # делаю запрос с конкретным where title LIKE и тд.
-        resp_DB_title_board = self.req_DB.request_str_title_board(title, board)[0]
-        if not resp_DB_title_board:
-            print("Несопоставление карточки и доски")
-            return self.stat.card_not_update_disc
+
+        response_db = self.req_DB.request_title_board(title, board)
+        if not response_db:
+            return self.stat.card_not_match
 
         collecte_data = [title, board]
+        card = response_db[0]
         if status != None:
             collecte_data.append(status)
         else:
-            collecte_data.append(resp_DB_title_board[2])
-
+            collecte_data.append(card[2])
         if description != None:
             collecte_data.append(description)
         else:
-            collecte_data.append(resp_DB_title_board[3])
-
+            collecte_data.append(card[3])
         if assignee != None:
             collecte_data.append(assignee)
         else:
-            collecte_data.append(resp_DB_title_board[4])   
-
+            collecte_data.append(card[4])   
         if estimation != None:
             collecte_data.append(estimation)
         else:
-            collecte_data.append(resp_DB_title_board[5])   
+            collecte_data.append(card[5])   
 
-        collecte_data.append(resp_DB_title_board[6])
-        collecte_data.append(resp_DB_title_board[7])
+        collecte_data.append(card[6])
+        collecte_data.append(card[7])
         collecte_data.append(int(time.time()))
         collecte_data.append(username)
 
         respons_to_serv = self.req_DB.request_card_update(collecte_data)
         if respons_to_serv:
-            print('Карточка обновлена!')
-            return self.stat.card_update
-        print('Карточка не обновлена!')  
+            return self.stat.card_update 
         return self.stat.card_not_update
         
-    def card_delete(self, data):
+    def card_delete(self, data: dict) -> dict:
         """For delete a card."""
         title = data["title"]
         board = data["board"]
-        resp_of_DB = self.req_DB.request_str_title_board(title, board)
-        if not resp_of_DB:
-            print('Tакой карточки не сущесвует')
+        response_db = self.req_DB.request_title_board(title, board)
+        if not response_db:
             return self.stat.card_not_exist
-        
-        card_delete = self.req_DB.request_card_delete(title, board)
-        if card_delete:
-            print('Карточка удалена')
-            return self.stat.card_delete
-
-        print('Карточка не удалена !!!')   
+        response_db_card_delete = self.req_DB.request_card_delete(title, board)
+        if response_db_card_delete:
+            return self.stat.card_delete 
         return self.stat.card_not_delete
 
-
-    def column_info(self, data):
-        """ """
+    def column_info(self, data: dict) -> dict:
+        """The column report. Getting info about a task."""
         board = data["board"]
         column = data["column"]
         assignee = data["assignee"]
 
-        resp_DB = self.req_DB.request_get_info_column(board, column, assignee)
-
-        if not resp_DB:
+        response_db = self.req_DB.request_info_column(board, column, assignee)
+        if not response_db:
             return self.stat.colum_not_info
-
-        response_dict = {"board": board,
-                         "column": column,
-                         "assignee": assignee,
-                         "count": len(resp_DB),
-                         "estimation": None,
-                         "cards": []
-                        }
-
-        for card in resp_DB:
-            title = card[0]
-            board = card[1]
-            status = card[2]
-            description = card[3]
-            assignee = card[4]
-            estimation = card[5]
-            created_at = str(datetime.fromtimestamp(int(card[6])))
-            created_by = card[7]
-            last_updated_at = str(datetime.fromtimestamp(int(card[8])))
-            last_updated_by =card[9]
-
+        response_to_serv = {
+                            "board": board,
+                            "column": column,
+                            "assignee": assignee,
+                            "count": len(response_db),
+                            "estimation": None,
+                            "cards": []
+                            }
+        for card in response_db:
             card_dict = {
-                        "title": title,
-                        "board": board,
-                        "status": status,
-                        "description": description,
-                        "assignee": assignee, 
-                        "estimation": estimation, 
-                        "created_at": created_at,
-                        "created_by": created_by,
-                        "last_updated_at": last_updated_at,
-                        "last_updated_by": last_updated_by
+                        "title": card[0],
+                        "board": card[1],
+                        "status": card[2],
+                        "description": card[3],
+                        "assignee": card[4], 
+                        "estimation": card[5], 
+                        "created_at": str(datetime.fromtimestamp(int(card[6]))),
+                        "created_by": card[7],
+                        "last_updated_at": str(datetime.fromtimestamp(int(card[8]))),
+                        "last_updated_by": card[9]
                         }
-            response_dict["cards"].append(card_dict)
-        return response_dict
+        response_to_serv["cards"].append(card_dict)
+        return response_to_serv
