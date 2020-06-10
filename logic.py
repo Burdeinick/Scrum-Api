@@ -32,12 +32,18 @@ class Statuses:
         self.card_not_delete = {"status": "The card has not been deleted."}
         self.colum_not_info = {"status": "The information about these columns are absent."}
 
+        def __str__(self):
+            return __class__.__name__
+
 
 class ConnectionDB:
     """Class for connect to DB."""
     def __init__(self):
         self.conn = psycopg2.connect(dbname=dbname, user=user, password=password)
         self.cursor = self.conn.cursor()
+
+    def __str__(self):
+        return __class__.__name__
 
 
 class RequestsDB:
@@ -46,6 +52,9 @@ class RequestsDB:
         self.connect_db = ConnectionDB()
         self.stat = Statuses()
 
+    def __str__(self):
+        return __class__.__name__
+
     def request_get_all_users(self) -> list:
         """This function returning of list all the users."""
         self.connect_db.cursor.execute("SELECT username FROM users")
@@ -53,8 +62,8 @@ class RequestsDB:
 
     def request_authen_user(self, username: str, usersecret: str ) -> list:
         """This function checking authentification user."""
-        request = f"SELECT username  \
-                    FROM users \
+        request = f"SELECT username \
+                    FROM users      \
                     WHERE (username='{username}') AND (password='{usersecret}')"
         self.connect_db.cursor.execute(request)
         return self.connect_db.cursor.fetchall()
@@ -93,8 +102,8 @@ class RequestsDB:
 
     def request_one_board(self, title: str) -> list:
         """For checking this board."""
-        request = f"SELECT title  \
-                    FROM boards  \
+        request = f"SELECT title    \
+                    FROM boards     \
                     WHERE title='{title}'"
 
         self.connect_db.cursor.execute(request)                                       
@@ -196,15 +205,15 @@ class RequestsDB:
         created_by = collecte_data[7]
         last_updated_at = collecte_data[8]
         last_updated_by = collecte_data[9]   
-        request = f"UPDATE cards \
-                    SET status = '{status}', \
-                        description = '{description}', \
-                        assignee = '{assignee}', \
-                        estimation = '{estimation}', \
-                        created_at = '{created_at}', \
-                        created_by = '{created_by}', \
-                        last_updated_at = '{last_updated_at}', \
-                        last_updated_by = '{last_updated_by}' \
+        request = f"UPDATE cards                                \
+                    SET status = '{status}',                    \
+                        description = '{description}',          \
+                        assignee = '{assignee}',                \
+                        estimation = '{estimation}',            \
+                        created_at = '{created_at}',            \
+                        created_by = '{created_by}',            \
+                        last_updated_at = '{last_updated_at}',  \
+                        last_updated_by = '{last_updated_by}'   \
                         WHERE(title='{title}') AND (board='{board}')"
 
         self.connect_db.cursor.execute(request)
@@ -227,17 +236,17 @@ class RequestsDB:
 
     def request_info_column(self, board: str, status: str, assignee: str) -> list:
         """For request about the column."""
-        request = f"SELECT title, \
-                    board, \
-                    status, \
-                    description, \
-                    assignee, \
-                    estimation, \
-                    created_at, \
-                    created_by, \
-                    last_updated_at, \
-                    last_updated_by \
-                    FROM cards \
+        request = f"SELECT title,       \
+                    board,              \
+                    status,             \
+                    description,        \
+                    assignee,           \
+                    estimation,         \
+                    created_at,         \
+                    created_by,         \
+                    last_updated_at,    \
+                    last_updated_by     \
+                    FROM cards          \
                     WHERE (board='{board}') AND (status='{status}') AND (assignee='{assignee}');"
         self.connect_db.cursor.execute(request)                                       
         return self.connect_db.cursor.fetchall() 
@@ -428,7 +437,6 @@ class UsingDB:
         board = data["board"]
         column = data["column"]
         assignee = data["assignee"]
-
         response_db = self.req_DB.request_info_column(board, column, assignee)
         if not response_db:
             return self.stat.colum_not_info
@@ -453,5 +461,65 @@ class UsingDB:
                         "last_updated_at": str(datetime.fromtimestamp(int(card[8]))),
                         "last_updated_by": card[9]
                         }
+
+
         response_to_serv["cards"].append(card_dict)
         return response_to_serv
+
+
+# class Estimation:
+#     """The class for calculating some estimations. """
+#     def __init__(self, ):
+#         self.response = ''
+
+#     def __str__(self):
+#         return __class__.__name__
+
+#     def __add__(self, other):
+#         pass
+
+#     class Estimation:
+#     def __init__(self):
+#         self.response = ''
+
+#     def month(self, value):
+#         int_part = value // 160
+#         if int_part:
+#             self.response += f"{int_part}m"
+#             remain = value % 160 
+#             self.week(remain)
+#             return
+#         self.week(value)  
+
+#     def week(self, value):
+#         int_part = value // 40
+#         if int_part:
+#             self.response += f"{int_part}w"
+#             remain = value % 40
+#             self.day(remain)
+#             return
+#         self.day(value)
+
+
+
+#     def day(self, value):
+#         int_part = value // 8
+#         if int_part:
+#             self.response += f"{int_part}d"
+#             remain = value % 8
+#             self.hour(remain)
+#             return
+#         self.hour(value)
+
+
+#     def hour(self, value):
+#         if value:
+#             self.response += f"{value}h"
+
+
+
+# est = Estimation()
+# est.month(128)
+
+# print(est.response)
+
