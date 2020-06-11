@@ -86,4 +86,4 @@ def colum_info():
 # card_create()
 # card_update()
 # card_delete()
-# colum_info()
+colum_info()
