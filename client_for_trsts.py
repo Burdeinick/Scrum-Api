@@ -12,10 +12,11 @@ def board_create():
     url = r'http://127.0.0.1:5000/api/v1/board/create'
     headers = {"UserName": "Kop", "UserSecret": "456"}
     data = {
-            "title": "Доска разработчика 5",
+            "title": "Доска разработчика 1",
             "columns": [
                         "ToDo",
-                        "InProgress"
+                        "InProgress",
+                        "Done"
                         ]
             }
     requests.post(url, json=data, headers=headers)
@@ -38,12 +39,12 @@ def card_create():
     url = r'http://127.0.0.1:5000/api/v1/card/create'
     headers = {"UserName": "Bob", "UserSecret": "123"}
     data = {
-            "title": "Доска 13",
-            "board": "Доска разработчика 5",
+            "title": "Доска 3",
+            "board": "Доска разработчика",
             "status": "Noooo",
             "description": "Необходимо проверить",
             "assignee": "Username",
-            "estimation": "7h"
+            "estimation": "4m"
             }
     requests.post(url, json=data, headers=headers) 
 

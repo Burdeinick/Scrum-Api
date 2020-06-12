@@ -2,7 +2,7 @@ import psycopg2
 from contextlib import closing
 import time
 from datetime import datetime
-import re
+
 
 dbname = "t_managing_db"
 user = "alex"
@@ -81,7 +81,7 @@ class RequestsDB:
         request = f"INSERT INTO boards(                  \
                                         title,           \
                                         columns,         \
-                                        created_at       \
+                                        created_at,      \
                                         created_by,      \
                                         last_updated_at, \
                                         last_updated_by  \
@@ -439,7 +439,9 @@ class UsingDB:
         column = data["column"]
         assignee = data["assignee"]
         response_db = self.req_DB.request_info_column(board, column, assignee)
+        
         self.obj_estim1 = Estimation('0h')
+
         if not response_db:
             return self.stat.colum_not_info
         response_to_serv = {
@@ -452,7 +454,6 @@ class UsingDB:
                             }
         for card in response_db:
             card_dict = {
-                        
                         "title": card[0],
                         "board": card[1],
                         "status": card[2],
@@ -464,26 +465,32 @@ class UsingDB:
                         "last_updated_at": str(datetime.fromtimestamp(int(card[8]))),
                         "last_updated_by": card[9]
                         }
+            response_to_serv["cards"].append(card_dict)
 
             
+            # self.obj_estim1 = Estimation('0h')
+            # self.intermed = self.obj_estim1 + obj_estim2
+
+            # self.sum = self.intermed + obj_estim2
+           
             obj_estim2 = Estimation(card[5])
-            self.obj_sum = self.obj_estim1 + obj_estim2
 
-        c = SumEstimation(self.obj_sum).response
-        print(c)
-        response_to_serv["estimation"] = c
+            self.obj_estim1 += obj_estim2
+            print('obj_estim2', self.obj_estim1)
 
 
-        response_to_serv["cards"].append(card_dict)
+        response_to_serv["estimation"] = SumEstimation(self.obj_estim1).response
         return response_to_serv
 
 
-
 class Estimation:
-    """The class for calculating some estimations."""
+    """The class calculating some estimations in the month,
+     week, day, hour format and formatting them to the hour format.
+
+     """
     def __init__(self, value):
         self.value_str = value
-        self.val_hour = self.pars_transfor(value) 
+        self.val_hour = self.pars_transfor(value)
 
     def __str__(self):
         return self.value_str
@@ -492,8 +499,9 @@ class Estimation:
         return self.value_str
 
     def pars_transfor(self, value: str) -> int:
-        char = value[-1]
-        numer = value[:-1]
+        """The function formatting 'value' to the number to the hour format."""
+        char = str(value[-1])
+        numer = int(value[:-1])
         if char == 'm':
             return numer * 160
         if char == 'w':
@@ -507,24 +515,28 @@ class Estimation:
         instance = str(int(other.val_hour) + int(self.val_hour)) + 'h'
         return Estimation(instance)
 
-
 class SumEstimation:
-    """ """
-    def __init__(self, value):
-        self.value = int(str(value)[:-1])
+    """The class for calculation the sum of ratings
+     for all tasks assigned to the performer in this column.
+
+     """
+    def __init__(self, odb_estim):
         self.response = ""
-        self.month(self.value)
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+        self.val_hour = int(str(odb_estim)[:-1])
+        self.month(self.val_hour)
+
     def month(self, value):
+        """The processing of months."""
         int_part = value // 160
         if int_part:
             self.response += f"{int_part}m"
             remain = value % 160 
             self.week(remain)
-            return 
+            return
         self.week(value)  
 
     def week(self, value):
+        """The processing of weeks."""
         int_part = value // 40
         if int_part:
             self.response += f"{int_part}w"
@@ -534,6 +546,7 @@ class SumEstimation:
         self.day(value)
 
     def day(self, value):
+        """The processing of days."""
         int_part = value // 8
         if int_part:
             self.response += f"{int_part}d"
@@ -543,5 +556,6 @@ class SumEstimation:
         self.hour(value)
 
     def hour(self, value):
+        """The processing of hours."""
         if value:
             self.response += f"{value}h"
