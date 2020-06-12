@@ -439,9 +439,7 @@ class UsingDB:
         column = data["column"]
         assignee = data["assignee"]
         response_db = self.req_DB.request_info_column(board, column, assignee)
-        
         self.obj_estim1 = Estimation('0h')
-
         if not response_db:
             return self.stat.colum_not_info
         response_to_serv = {
@@ -466,20 +464,10 @@ class UsingDB:
                         "last_updated_by": card[9]
                         }
             response_to_serv["cards"].append(card_dict)
-
-            
-            # self.obj_estim1 = Estimation('0h')
-            # self.intermed = self.obj_estim1 + obj_estim2
-
-            # self.sum = self.intermed + obj_estim2
-           
             obj_estim2 = Estimation(card[5])
-
             self.obj_estim1 += obj_estim2
-            print('obj_estim2', self.obj_estim1)
-
-
-        response_to_serv["estimation"] = SumEstimation(self.obj_estim1).response
+        obj_sum_estim = SumEstimation(self.obj_estim1)  
+        response_to_serv["estimation"] = obj_sum_estim.response 
         return response_to_serv
 
 
