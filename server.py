@@ -6,9 +6,14 @@ import psycopg2
 app = Flask(__name__)
 
 def authentific(headers: dict) -> bool:
-    username = str(request.headers['UserName'])
-    usersecret = str(request.headers['UserSecret'])
-    autenf_data = (username, usersecret)
+    """This function for authentification of user."""
+    try:
+        username = request.headers['UserName']
+        usersecret = request.headers['UserSecret']
+        autenf_data = (username, usersecret)
+    except KeyError:
+        print("Error: invalid request form 'UserName' or 'UserSecret'.")
+        return False
     if UsingDB().autefication_users(autenf_data):
         print(f"Пользователь '{username}' прошел аутентификацию.")
         return True

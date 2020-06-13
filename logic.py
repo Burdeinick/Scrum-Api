@@ -15,7 +15,7 @@ class Statuses:
         self.aut_error = {"status":"Authentification Error."}
         self.user_no_avaib = {"status": "No users available"} 
         self.such_board_exists = {"status": "This a board already exist."}
-        self.board_create = {"status": "The board was created."}
+        self.board_create = {"status": "The board is created."}
         self.board_not_create = {"status": "The new board was don't created."}
         self.board_delete = {"status": "The board removed."}
         self.board_not_delete = {"status": "The board was don't delete."}
@@ -32,19 +32,14 @@ class Statuses:
         self.card_delete = {"status": "The card removed."}
         self.card_not_delete = {"status": "The card has not been deleted."}
         self.colum_not_info = {"status": "The information about these columns are absent."}
-
-        def __str__(self):
-            return __class__.__name__
-
+        self.invalid_data = {"status": "Invalid request form 'data' of client."}
+        self.invalid_inp_estim = {"status": "Invalid 'estimation'. Please repair the field 'estimation'."}
 
 class ConnectionDB:
     """Class for connect to DB."""
     def __init__(self):
         self.conn = psycopg2.connect(dbname=dbname, user=user, password=password)
         self.cursor = self.conn.cursor()
-
-    def __str__(self):
-        return __class__.__name__
 
 
 class RequestsDB:
@@ -57,12 +52,12 @@ class RequestsDB:
         return __class__.__name__
 
     def request_get_all_users(self) -> list:
-        """This function returning of list all the users."""
+        """This method returning of list all the users."""
         self.connect_db.cursor.execute("SELECT username FROM users")
         return self.connect_db.cursor.fetchall()
 
     def request_authen_user(self, username: str, usersecret: str ) -> list:
-        """This function checking authentification user."""
+        """This method checking authentification user."""
         request = f"SELECT username \
                     FROM users      \
                     WHERE (username='{username}') AND (password='{usersecret}')"
@@ -70,7 +65,7 @@ class RequestsDB:
         return self.connect_db.cursor.fetchall()
 
     def request_create_board(self, collecte_data: tuple) -> bool:
-        """The function for requests to DB for adding new board in "boards" table."""
+        """The method for requests to DB for adding new board in "boards" table."""
         title = collecte_data[0]
         columns = collecte_data[1]
         created_at = collecte_data[2]
@@ -121,7 +116,7 @@ class RequestsDB:
         return False
 
     def request_get_all_boards(self) -> list:
-        """This function returns list of the boards."""
+        """This method returns list of the boards."""
         request = f"SELECT title,               \
                             columns,            \
                             created_at,         \
@@ -133,7 +128,7 @@ class RequestsDB:
         return self.connect_db.cursor.fetchall()
 
     def request_title_board(self, title: str, board: str) -> list:
-        """The function checking 'title' and 'board' in one string."""
+        """The method checking 'title' and 'board' in one string."""
         request = f"SELECT title,               \
                             board,              \
                             status,             \
@@ -150,7 +145,7 @@ class RequestsDB:
         return self.connect_db.cursor.fetchall()
 
     def request_create_card(self, collecte_data: tuple) -> bool:
-        """The function for creating a card."""
+        """The method for creating a card."""
         title = collecte_data[0]
         board = collecte_data[1]
         status = collecte_data[2]
@@ -195,7 +190,7 @@ class RequestsDB:
         return False
 
     def request_card_update(self, collecte_data: list) -> bool:
-        """The function for updating a card."""
+        """The method for updating a card."""
         title = collecte_data[0]
         board = collecte_data[1]
         status = collecte_data[2]
@@ -270,7 +265,7 @@ class UsingDB:
         return False
 
     def get_all_users(self) -> dict:
-        """This function can get all the users from DB."""
+        """This method can get all the users from DB."""
         respons_to_serv = {"users": []}
         respons_db = self.req_DB.request_get_all_users()
         if not respons_db:
@@ -283,12 +278,15 @@ class UsingDB:
     def create_board(self, data: dict, head: dict) -> dict:
         """For create a new board."""
         username = str(head['UserName'])
-        title = str(data["title"])
-        colums = str(' '.join(data["columns"]))
-        created_at = str(int(time.time()))
-        created_by = str(username)
-        last_updated_at =  str(int(time.time()))
-        last_updated_by = str(username)
+        try:
+            title = str(data["title"])
+            colums = str(' '.join(data["columns"]))
+            created_at = str(int(time.time()))
+            created_by = str(username)
+            last_updated_at =  str(int(time.time()))
+            last_updated_by = str(username)
+        except KeyError:
+            return self.stat.invalid_data
         collecte_data = (
                          title,
                          colums,
@@ -306,7 +304,10 @@ class UsingDB:
 
     def delete_board(self, data: dict) -> dict:
         """For delete the board."""
-        title = str(data["title"])
+        try:
+            title = str(data["title"])
+        except KeyError:
+            return self.stat.invalid_data
         respons_db = self.req_DB.request_one_board(title)
         if not respons_db:
             return self.stat.board_not_exist
@@ -317,11 +318,11 @@ class UsingDB:
             return self.stat.board_not_delete
 
     def get_all_boars(self) -> dict:
-        """This function can get all the boards from DB."""
+        """This method can get all the boards from DB."""
         respons_db = self.req_DB.request_get_all_boards()
         if not respons_db:
             return self.stat.boards_not_exist
-        response_to_serv = {"count": None, "boards": [] }
+        response_to_serv = {"count": None, "boards": []}
         for values in respons_db:
             count = str(len(respons_db))
             board = str(values[0])
@@ -342,16 +343,24 @@ class UsingDB:
     def create_cards(self, data: dict, head: dict) -> dict:
         """For create a new card."""
         username = str(head['UserName'])
-        title = data["title"]
-        board = data["board"]
-        status = data["status"]
-        description = data["description"]
-        assignee = data["assignee"]
-        estimation = data["estimation"]
-        created_at = int(time.time())
-        created_by = str(username)
-        last_updated_at = int(time.time())
-        last_updated_by = str(username)
+        try:
+            title = str(data["title"])
+            board = str(data["board"])
+            status = str(data["status"])
+            description = str(data["description"])
+            assignee = str(data["assignee"])
+            estimation = str(data["estimation"])
+            if (estimation[-1:] != "m") and     \
+                (estimation[-1:] != "w") and    \
+                (estimation[-1:] != "d") and    \
+                (estimation[-1:] != "h"):
+                return self.stat.invalid_inp_estim
+            created_at = int(time.time())
+            created_by = str(username)
+            last_updated_at = int(time.time())
+            last_updated_by = str(username)
+        except KeyError:
+            return self.stat.invalid_data
         collecte_data = (
                          title,
                          board,
@@ -381,17 +390,18 @@ class UsingDB:
     def update_card(self, data: dict, head: dict) -> dict:
         """For update a card."""
         username = str(head['UserName'])
-        title = data["title"]
-        board = data["board"]
-        status = data.get("status")
-        description = data.get("description")
-        assignee = data.get("assignee")
-        estimation = data.get("estimation")
-
+        try:
+            title = data["title"]
+            board = data["board"]
+            status = data.get("status")
+            description = data.get("description")
+            assignee = data.get("assignee")
+            estimation = data.get("estimation")
+        except KeyError:
+            return self.stat.invalid_data
         response_db = self.req_DB.request_title_board(title, board)
         if not response_db:
             return self.stat.card_not_match
-
         collecte_data = [title, board]
         card = response_db[0]
         if status != None:
@@ -410,12 +420,10 @@ class UsingDB:
             collecte_data.append(estimation)
         else:
             collecte_data.append(card[5])   
-
         collecte_data.append(card[6])
         collecte_data.append(card[7])
         collecte_data.append(int(time.time()))
         collecte_data.append(username)
-
         respons_to_serv = self.req_DB.request_card_update(collecte_data)
         if respons_to_serv:
             return self.stat.card_update 
@@ -423,8 +431,11 @@ class UsingDB:
         
     def card_delete(self, data: dict) -> dict:
         """For delete a card."""
-        title = data["title"]
-        board = data["board"]
+        try:
+            title = data["title"]
+            board = data["board"]
+        except KeyError:
+            return self.stat.invalid_data
         response_db = self.req_DB.request_title_board(title, board)
         if not response_db:
             return self.stat.card_not_exist
@@ -435,9 +446,12 @@ class UsingDB:
 
     def column_info(self, data: dict) -> dict:
         """The column report. Getting info about a task."""
-        board = data["board"]
-        column = data["column"]
-        assignee = data["assignee"]
+        try:
+            board = data["board"]
+            column = data["column"]
+            assignee = data["assignee"]
+        except KeyError:
+            return self.stat.invalid_data
         response_db = self.req_DB.request_info_column(board, column, assignee)
         self.obj_estim1 = Estimation('0h')
         if not response_db:
@@ -487,7 +501,7 @@ class Estimation:
         return self.value_str
 
     def pars_transfor(self, value: str) -> int:
-        """The function formatting 'value' to the number to the hour format."""
+        """The method formatting 'value' to the number to the hour format."""
         char = str(value[-1])
         numer = int(value[:-1])
         if char == 'm':

@@ -7,12 +7,15 @@ def get_users():
     headers = {"UserName": "Kop", "UserSecret": "456"}
     requests.post(url, headers=headers)
 
+
+
+
 def board_create():
     """For board create"""
     url = r'http://127.0.0.1:5000/api/v1/board/create'
     headers = {"UserName": "Kop", "UserSecret": "456"}
     data = {
-            "title": "Доска разработчика 1",
+            "title": 5,
             "columns": [
                         "ToDo",
                         "InProgress",
@@ -25,7 +28,7 @@ def board_delete():
     """ For board delete"""
     url = r'http://127.0.0.1:5000/api/v1/board/delete'
     headers = {"UserName": "Kop", "UserSecret": "456"}
-    data = {"title": "Доска разработчика 3"}
+    data = {1: "5"}
     requests.post(url, json=data, headers=headers)
 
 def board_list():
@@ -39,12 +42,12 @@ def card_create():
     url = r'http://127.0.0.1:5000/api/v1/card/create'
     headers = {"UserName": "Bob", "UserSecret": "123"}
     data = {
-            "title": "Доска 3",
+            "title": "Тест снова 1",
             "board": "Доска разработчика",
             "status": "Noooo",
             "description": "Необходимо проверить",
             "assignee": "Username",
-            "estimation": "4m"
+            "estimation": "7y"
             }
     requests.post(url, json=data, headers=headers) 
 
@@ -53,9 +56,9 @@ def card_update():
     url = r'http://127.0.0.1:5000/api/v1/card/update'
     headers = {"UserName": "Kop", "UserSecret": "456"}
     data = {
-            "title": "Новая",
+            "title": "Тест снова 1",
             "board": "Доска разработчика",
-            "status": "hjgjgh",
+            "status": "обновил карту2",
             }
     requests.post(url, json=data, headers=headers) 
 
@@ -64,8 +67,8 @@ def card_delete():
     url = r'http://127.0.0.1:5000/api/v1/card/delete'
     headers = {"UserName": "Bob", "UserSecret": "123"}
     data = {
-            "title": "Доска 13",
-            "board": "Доска разработчика 5"
+            "title": "Карточка 4",
+            "board": "Доска разработчика"
             }
     requests.post(url, json=data, headers=headers) 
 
@@ -87,4 +90,4 @@ def colum_info():
 # card_create()
 # card_update()
 # card_delete()
-colum_info()
+# colum_info()
