@@ -1,0 +1,7 @@
+{
+    "server":{"host": "127.0.0.1", 
+              "port": "5000"}, 
+    "Data_Base":{"dbname": "t_managing_db", 
+                 "user": "alex",
+                 "password": "0525"}
+}

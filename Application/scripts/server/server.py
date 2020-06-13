@@ -1,9 +1,11 @@
 from flask import Flask, request
-from logic import UsingDB
-from logic import Statuses
+from scripts.logic.logic import UsingDB
+from scripts.logic.logic import Statuses
 import psycopg2
 
+
 app = Flask(__name__)
+
 
 def authentific(headers: dict) -> bool:
     """This function for authentification of user."""
@@ -20,6 +22,7 @@ def authentific(headers: dict) -> bool:
     print(f"Пользователь '{username}' не прошел аутентификацию.")
     return False
 
+
 @app.route("/api/v1/user/list", methods=['POST'])
 def get_all_users() -> dict:
     """Get all users."""
@@ -28,6 +31,7 @@ def get_all_users() -> dict:
         print(response)
         return response
     return Statuses().aut_error
+
 
 @app.route("/api/v1/board/create", methods=['POST'])
 def board_create() -> dict:
@@ -40,6 +44,7 @@ def board_create() -> dict:
         return reponse
     return Statuses().aut_error
 
+
 @app.route("/api/v1/board/delete", methods=['POST'])
 def board_delete() -> dict:
     """For delete board."""
@@ -50,6 +55,7 @@ def board_delete() -> dict:
         return response
     return Statuses().aut_error
 
+
 @app.route("/api/v1/board/list", methods=['POST'])
 def board_list() -> dict:
     """Get all boards."""
@@ -58,6 +64,7 @@ def board_list() -> dict:
         print(response)
         return response
     return Statuses().aut_error
+
 
 @app.route("/api/v1/card/create", methods=['POST'])
 def card_create() -> dict:
@@ -70,6 +77,7 @@ def card_create() -> dict:
         return UsingDB().create_cards(data, head)
     return Statuses().aut_error
 
+
 @app.route("/api/v1/card/update", methods=['POST'])
 def card_update() -> dict:
     """For update a card."""
@@ -81,6 +89,7 @@ def card_update() -> dict:
         return response
     return Statuses().aut_error
 
+
 @app.route("/api/v1/card/delete", methods=['POST'])
 def card_delete() -> dict:
     """For delete a card."""
@@ -90,6 +99,7 @@ def card_delete() -> dict:
         print(response)
         return response
     return Statuses().aut_error
+
 
 @app.route("/api/v1/report/cards_by_column", methods=['POST'])
 def colum_info() -> dict:
@@ -101,6 +111,3 @@ def colum_info() -> dict:
         return response
     return Statuses().aut_error
 
-
-if __name__ == "__main__":
-    app.run()

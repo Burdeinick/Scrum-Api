@@ -1,12 +1,21 @@
-import psycopg2
-from contextlib import closing
 import time
+import json
+import psycopg2
 from datetime import datetime
 
 
-dbname = "t_managing_db"
-user = "alex"
-password = "0525"
+def get_config_DB():
+    with open('config.json') as config:
+        json_str = config.read()
+        json_str = json.loads(json_str)
+
+    dbname = json_str['Data_Base']['dbname']
+    user = json_str['Data_Base']['user']
+    password = json_str['Data_Base']['password']
+    return dbname, user, password
+
+
+dbname, user, password = get_config_DB()
 
 
 class Statuses:
@@ -350,10 +359,7 @@ class UsingDB:
             description = str(data["description"])
             assignee = str(data["assignee"])
             estimation = str(data["estimation"])
-            if (estimation[-1:] != "m") and     \
-                (estimation[-1:] != "w") and    \
-                (estimation[-1:] != "d") and    \
-                (estimation[-1:] != "h"):
+            if estimation[-1:] not in ['m', 'w', 'd', 'h']:
                 return self.stat.invalid_inp_estim
             created_at = int(time.time())
             created_by = str(username)
