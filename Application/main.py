@@ -6,7 +6,7 @@ def main():
     app.run(*get_config())
 
 def get_config():
-    with open('config.json') as config:
+    with open('Application/config.json') as config:
         json_str = config.read()
         json_str = json.loads(json_str)
 

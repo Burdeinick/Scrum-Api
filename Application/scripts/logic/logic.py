@@ -4,20 +4,6 @@ import psycopg2
 from datetime import datetime
 
 
-def get_config_DB():
-    with open('config.json') as config:
-        json_str = config.read()
-        json_str = json.loads(json_str)
-
-    dbname = json_str['Data_Base']['dbname']
-    user = json_str['Data_Base']['user']
-    password = json_str['Data_Base']['password']
-    return dbname, user, password
-
-
-dbname, user, password = get_config_DB()
-
-
 class Statuses:
     """The statuses of answers is here."""
     def __init__(self):
@@ -47,8 +33,26 @@ class Statuses:
 class ConnectionDB:
     """Class for connect to DB."""
     def __init__(self):
-        self.conn = psycopg2.connect(dbname=dbname, user=user, password=password)
+        self.dbname, self.user, self.password = self.get_config_db()
+        self.conn = psycopg2.connect(dbname=self.dbname, user=self.user, password=self.password)
         self.cursor = self.conn.cursor()
+        
+    def get_config_db(self):
+        """This method getting of configuration files, such as
+            'host',
+            'port',
+            'dbname',
+            'user',
+            'password'.
+        
+         """
+        with open('Application/config.json') as config:
+            json_str = config.read()
+            json_str = json.loads(json_str)
+        dbname = json_str['Data_Base']['dbname']
+        user = json_str['Data_Base']['user']
+        password = json_str['Data_Base']['password']
+        return dbname, user, password
 
 
 class RequestsDB:
