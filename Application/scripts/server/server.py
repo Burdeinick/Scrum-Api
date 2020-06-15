@@ -74,7 +74,7 @@ def card_create() -> dict:
         head = request.headers
         response = UsingDB().create_cards(data, head)
         print(response)
-        return UsingDB().create_cards(data, head)
+        return response
     return Statuses().aut_error
 
 

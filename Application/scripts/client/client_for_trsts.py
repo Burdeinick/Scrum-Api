@@ -13,7 +13,7 @@ def board_create():
     url = r'http://127.0.0.1:5000/api/v1/board/create'
     headers = {"UserName": "Kop", "UserSecret": "456"}
     data = {
-            "title": 'tre',
+            "title": 'Новая доска',
             "columns": [
                         "ToDo",
                         "InProgress",
@@ -24,15 +24,15 @@ def board_create():
 
 
 def board_delete():
-    """ For board delete"""
+    """ For board delete."""
     url = r'http://127.0.0.1:5000/api/v1/board/delete'
     headers = {"UserName": "Kop", "UserSecret": "456"}
-    data = {1: "5"}
+    data = {"title": "Новая доска"}
     requests.post(url, json=data, headers=headers)
 
 
 def board_list():
-    """ Get all boards """
+    """Get all boards."""
     url = r'http://127.0.0.1:5000/api/v1/board/list'
     headers = {"UserName": "Kop", "UserSecret": "456"}
     requests.post(url, headers=headers)   
@@ -41,14 +41,14 @@ def board_list():
 def card_create():
     """Create a card."""
     url = r'http://127.0.0.1:5000/api/v1/card/create'
-    headers = {"UserName": "Bob", "UserSecret": "123"}
+    headers = {"UserName": "Kop", "UserSecret": "456"}
     data = {
-            "title": "Тест снова 1",
-            "board": "Доска разработчика",
-            "status": "Noooo",
-            "description": "Необходимо проверить",
-            "assignee": "Username",
-            "estimation": "7y"
+                "title": "Карточка 1",
+                "board": "Новая доска",
+                "status": "Noooo",
+                "description": "Необходимо проверить",
+                "assignee": "Username",
+                "estimation": "4w"
             }
     requests.post(url, json=data, headers=headers) 
 
@@ -59,7 +59,7 @@ def card_update():
     headers = {"UserName": "Kop", "UserSecret": "456"}
     data = {
             "title": "Тест снова 1",
-            "board": "Доска разработчика",
+            "board": "tre",
             "status": "обновил карту2",
             }
     requests.post(url, json=data, headers=headers) 
@@ -68,10 +68,10 @@ def card_update():
 def card_delete():
     """For delete a card."""
     url = r'http://127.0.0.1:5000/api/v1/card/delete'
-    headers = {"UserName": "Bob", "UserSecret": "123"}
+    headers = {"UserName": "Kop", "UserSecret": "456"}
     data = {
-            "title": "Карточка 4",
-            "board": "Доска разработчика"
+            "title": "Тест снова 1",
+            "board": "tre"
             }
     requests.post(url, json=data, headers=headers) 
 
@@ -79,16 +79,16 @@ def card_delete():
 def colum_info():
     """Get info about a task."""
     url = r'http://127.0.0.1:5000/api/v1/report/cards_by_column'
-    headers = {"UserName": "Bob", "UserSecret": "123"}
+    headers = {"UserName": "Kop", "UserSecret": "456"}
     data = {
-            "board": "Доска разработчика",
+            "board": "tre",
             "column": "Noooo",
             "assignee": "Username"
             }
     requests.post(url, json=data, headers=headers) 
 
 # get_users()
-board_create()
+# board_create()
 # board_delete()
 # board_list()
 # card_create()
