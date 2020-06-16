@@ -213,6 +213,7 @@ class RequestsDB:
         created_at = collecte_data[6]
         created_by = collecte_data[7]
         last_updated_at = collecte_data[8]
+
         last_updated_by = collecte_data[9]   
         request = f"UPDATE cards                                \
                     SET status = '{status}',                    \
@@ -327,8 +328,7 @@ class UsingDB:
         respons_db_del = self.req_DB.request_delete_board(title)   
         if respons_db_del:
             return self.stat.board_delete
-        if respons_db_del: 
-            return self.stat.board_not_delete
+        return self.stat.board_not_delete
 
     def get_all_boars(self) -> dict:
         """This method can get all the boards from DB."""
@@ -398,7 +398,13 @@ class UsingDB:
         return self.stat.card_not_create
 
     def update_card(self, data: dict, head: dict) -> dict:
-        """For update a card."""
+        """For update a card.
+
+        The problem in logic: if "status","description","assignee",
+        "Username", "estimation" will have the mistakes of key,
+        in this case they have not updated!!!
+
+        """
         username = str(head['UserName'])
         try:
             title = data["title"]
@@ -425,11 +431,14 @@ class UsingDB:
         if assignee != None:
             collecte_data.append(assignee)
         else:
-            collecte_data.append(card[4])   
+            collecte_data.append(card[4]) 
         if estimation != None:
-            collecte_data.append(estimation)
+            if estimation[-1:] not in ['m', 'w', 'd', 'h']:
+                return self.stat.invalid_inp_estim
+            else:
+                collecte_data.append(estimation)
         else:
-            collecte_data.append(card[5])   
+            collecte_data.append(card[5])
         collecte_data.append(card[6])
         collecte_data.append(card[7])
         collecte_data.append(int(time.time()))
@@ -497,9 +506,9 @@ class UsingDB:
 
 class Estimation:
     """The class calculating some estimations in the month,
-     week, day, hour format and formatting them to the hour format.
+    week, day, hour format and formatting them to the hour format.
 
-     """
+    """
     def __init__(self, value):
         self.value_str = value
         self.val_hour = self.pars_transfor(value)
@@ -529,9 +538,9 @@ class Estimation:
 
 class SumEstimation:
     """The class for calculation the sum of ratings
-     for all tasks assigned to the performer in this column.
+    for all tasks assigned to the performer in this column.
 
-     """
+    """
     def __init__(self, odb_estim):
         self.response = ""
         self.val_hour = int(str(odb_estim)[:-1])
