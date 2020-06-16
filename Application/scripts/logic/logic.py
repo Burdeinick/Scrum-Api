@@ -363,8 +363,11 @@ class UsingDB:
             description = str(data["description"])
             assignee = str(data["assignee"])
             estimation = str(data["estimation"])
-            if estimation[-1:] not in ['m', 'w', 'd', 'h']:
-                return self.stat.invalid_inp_estim
+            try:
+                if estimation[-1:] not in ['m', 'w', 'd', 'h']:
+                    return self.stat.invalid_inp_estim
+            except IndexError:
+                self.invalid_inp_estim 
             created_at = int(time.time())
             created_by = str(username)
             last_updated_at = int(time.time())
@@ -431,14 +434,20 @@ class UsingDB:
         if assignee != None:
             collecte_data.append(assignee)
         else:
-            collecte_data.append(card[4]) 
-        if estimation != None:
-            if estimation[-1:] not in ['m', 'w', 'd', 'h']:
-                return self.stat.invalid_inp_estim
+            collecte_data.append(card[4])
+
+        try:
+            if estimation != None:
+                if estimation[-1:] not in ['m', 'w', 'd', 'h']:
+                    return self.stat.invalid_inp_estim
+                else:
+                    collecte_data.append(estimation)
             else:
-                collecte_data.append(estimation)
-        else:
-            collecte_data.append(card[5])
+                collecte_data.append(card[5])
+        except IndexError:
+            return self.stat.invalid_inp_estim
+
+
         collecte_data.append(card[6])
         collecte_data.append(card[7])
         collecte_data.append(int(time.time()))
@@ -510,8 +519,8 @@ class Estimation:
 
     """
     def __init__(self, value):
-        self.value_str = value
-        self.val_hour = self.pars_transfor(value)
+        self.value_str = str(value)
+        self.val_hour = int(self.pars_transfor(value))
 
     def __str__(self):
         return self.value_str

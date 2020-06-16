@@ -6,7 +6,11 @@ import json
 
 
 class TestApi(unittest.TestCase):
-    """This class for the testing of logic."""
+    """This class for the testing of Api.
+    
+    The checking the interaction of client requests and server responses.
+
+    """
     def test_1_get_all_users(self):
         """It must get all the users."""
         x = (
@@ -63,9 +67,9 @@ class TestApi(unittest.TestCase):
         """Test.Get all boards."""
         headers = {"UserName": "Kop", "UserSecret": "456"}
         with app.test_client() as client:
-            result = client.post('api/v1/board/list', headers=headers)
+            request = client.post('api/v1/board/list', headers=headers)
             resp_dict = {'count': None}
-            resp_dict['count'] = result.json['count']
+            resp_dict['count'] = request.json['count']
             self.assertEqual(resp_dict, {'count': '1'})
 
     def test_4_card_create(self):
@@ -193,8 +197,8 @@ class TestApi(unittest.TestCase):
                 "assignee": "Username"
                 }
         with app.test_client() as client:
-            result = client.post('api/v1/report/cards_by_column', headers=headers, json=data)
-            resp_dict = {'assignee': result.json['assignee'], 'board': result.json['board']}
+            request = client.post('api/v1/report/cards_by_column', headers=headers, json=data)
+            resp_dict = {'assignee': request.json['assignee'], 'board': request.json['board']}
             self.assertEqual(resp_dict, {'assignee': 'Username', 'board': 'Новая доска'})
 
     def test_7_card_delete(self):
@@ -209,7 +213,6 @@ class TestApi(unittest.TestCase):
                 "title": "Какая-то карточка",
                 "board": "Новая доска"
                 }, {"status": "The card does not exist."}),
-            
             ({
                 "title": "Карточка 1",
                 "board": "Новая доска"
@@ -218,9 +221,9 @@ class TestApi(unittest.TestCase):
         for value in x:
             data, extended = value
             with app.test_client() as client:
-                response = client.post('api/v1/card/delete',  headers=headers, json=data)
+                request = client.post('api/v1/card/delete',  headers=headers, json=data)
                 with self.subTest(x=value):
-                    self.assertEqual(response.json, extended)
+                    self.assertEqual(request.json, extended)
 
     def test_8_board_delete(self):
         """The test of remove the board."""
@@ -233,9 +236,9 @@ class TestApi(unittest.TestCase):
         for value in x:
             data, extended = value
             with app.test_client() as client:
-                response = client.post('api/v1/board/delete',  headers=headers, json=data)
+                request = client.post('api/v1/board/delete',  headers=headers, json=data)
                 with self.subTest(x=value):
-                    self.assertEqual(response.json, extended)
+                    self.assertEqual(request.json, extended)
 
 
 def test_server_run():
