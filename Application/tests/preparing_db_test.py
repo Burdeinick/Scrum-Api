@@ -74,6 +74,4 @@ def main():
     create_cards()
     add_user()
 
-
-if __name__ == "__main__":
-    main()
+main()

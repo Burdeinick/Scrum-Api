@@ -30,6 +30,7 @@ class Statuses:
         self.invalid_data = {"status": "Invalid request form 'data' of client."}
         self.invalid_inp_estim = {"status": "Invalid 'estimation'. Please repair the field 'estimation'."}
 
+
 class ConnectionDB:
     """Class for connect to DB."""
     def __init__(self):
@@ -353,6 +354,18 @@ class UsingDB:
             response_to_serv["boards"].append(d_board)
         return response_to_serv
 
+    def __check_char(self, estim: str) -> bool:
+        """This method checking of characters 'estimation'.
+        
+        If 'estimation' will for example '4hh' or '2', - > False
+
+        """
+        estimation = estim
+        char = [str(i) for i in estimation if i.isalpha()]
+        if len(char) != 1:
+            return True
+        return False
+
     def create_cards(self, data: dict, head: dict) -> dict:
         """For create a new card."""
         username = str(head['UserName'])
@@ -363,11 +376,13 @@ class UsingDB:
             description = str(data["description"])
             assignee = str(data["assignee"])
             estimation = str(data["estimation"])
+            if self.__check_char(estimation):
+                return self.stat.invalid_inp_estim 
             try:
                 if estimation[-1:] not in ['m', 'w', 'd', 'h']:
                     return self.stat.invalid_inp_estim
             except IndexError:
-                self.invalid_inp_estim 
+                self.stat.invalid_inp_estim
             created_at = int(time.time())
             created_by = str(username)
             last_updated_at = int(time.time())
@@ -416,6 +431,7 @@ class UsingDB:
             description = data.get("description")
             assignee = data.get("assignee")
             estimation = data.get("estimation")
+
         except KeyError:
             return self.stat.invalid_data
         response_db = self.req_DB.request_title_board(title, board)
@@ -435,9 +451,10 @@ class UsingDB:
             collecte_data.append(assignee)
         else:
             collecte_data.append(card[4])
-
         try:
             if estimation != None:
+                if self.__check_char(estimation):
+                    return self.stat.invalid_inp_estim
                 if estimation[-1:] not in ['m', 'w', 'd', 'h']:
                     return self.stat.invalid_inp_estim
                 else:
@@ -446,8 +463,6 @@ class UsingDB:
                 collecte_data.append(card[5])
         except IndexError:
             return self.stat.invalid_inp_estim
-
-
         collecte_data.append(card[6])
         collecte_data.append(card[7])
         collecte_data.append(int(time.time()))

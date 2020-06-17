@@ -43,12 +43,12 @@ def card_create():
     url = r'http://127.0.0.1:5000/api/v1/card/create'
     headers = {"UserName": "Kop", "UserSecret": "456"}
     data = {
-                "title": "Карточка 1",
+                "title": "Карточка 3",
                 "board": "Новая доска",
                 "status": "Noooo",
                 "description": "Необходимо проверить",
                 "assignee": "Username",
-                "estimation": "4w"
+                "estimation": "4hd"
             }
     requests.post(url, json=data, headers=headers) 
 
@@ -95,7 +95,7 @@ def colum_info():
 # board_create()
 # board_delete()
 # board_list()
-# card_create()
+card_create()
 # card_update()
 # card_delete()
 # colum_info()

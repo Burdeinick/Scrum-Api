@@ -114,7 +114,25 @@ class TestApi(unittest.TestCase):
                 "description": "Необходимо проверить",
                 "assignee": "Username",
                 "estimation": "4w"
-                }, {"status": "This a card already exist at this board."})
+                }, {"status": "This a card already exist at this board."}),
+            ({
+                "title": "Карточка 1",
+                "board": "Новая доска",
+                "status": "Noooo",
+                "description": "Необходимо проверить",
+                "assignee": "Username",
+                "estimation": "4"
+                }, {"status": "Invalid 'estimation'. Please repair the field 'estimation'."}),
+
+            ({
+                "title": "Карточка 1",
+                "board": "Новая доска",
+                "status": "Noooo",
+                "description": "Необходимо проверить",
+                "assignee": "Username",
+                "estimation": "4hd"
+                }, {"status": "Invalid 'estimation'. Please repair the field 'estimation'."}),
+
             )
         for value in x:
             data, extended = value
@@ -157,7 +175,23 @@ class TestApi(unittest.TestCase):
                 "title": "Карточка 1",
                 "board": "Такой доски нет",
                 "status": "ToDo",
-                }, {"status": "The 'Board' and the 'title' have not match."})
+                }, {"status": "The 'Board' and the 'title' have not match."}),     
+            ({
+                "title": "Карточка 1",
+                "board": "Новая доска",
+                "status": "Noooo",
+                "description": "Необходимо проверить",
+                "assignee": "Username",
+                "estimation": "4hd"
+                }, {"status": "Invalid 'estimation'. Please repair the field 'estimation'."}),
+            ({
+                "title": "Карточка 1",
+                "board": "Новая доска",
+                "status": "Noooo",
+                "description": "Необходимо проверить",
+                "assignee": "Username",
+                "estimation": "414"
+                }, {"status": "Invalid 'estimation'. Please repair the field 'estimation'."}),
             )
         for value in x:
             data, extended = value
