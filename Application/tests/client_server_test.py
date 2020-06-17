@@ -12,7 +12,7 @@ class TestApi(unittest.TestCase):
 
     """
     def test_1_get_all_users(self):
-        """It must get all the users."""
+        """Test. It must get all the users."""
         x = (
             ({"UserName": "Kop", "UserSecret": "456"}, ({'users': [{'username': 'Kop'}]})),
             ({"UserNam": "Kop", "UserSecret": "456"}, ({"status": "Authentification Error."})),
@@ -28,7 +28,7 @@ class TestApi(unittest.TestCase):
                     self.assertEqual(request.json, extended)
 
     def test_2_board_create(self):
-        """The creation of a board."""
+        """Test. The creation of a board."""
         headers = {"UserName": "Kop", "UserSecret": "456"}
         x = (
                 ({"title": 'Новая доска',
@@ -66,7 +66,7 @@ class TestApi(unittest.TestCase):
                     self.assertEqual(request.json, extended)
 
     def test_3_board_list(self):
-        """Test.Get all boards."""
+        """Test. Get all boards."""
         headers = {"UserName": "Kop", "UserSecret": "456"}
         with app.test_client() as client:
             request = client.post('api/v1/board/list', headers=headers)
@@ -75,9 +75,8 @@ class TestApi(unittest.TestCase):
             self.assertEqual(resp_dict, {'count': '1'})
 
     def test_4_card_create(self):
-        """
-        The creation test of a new card.
-
+        """Test. The creation test of a new card.
+        
         The problem in logic: if "status","description","assignee",
         "Username", "estimation" will have the mistakes of key,
         in this case they have not updated!!!
@@ -148,7 +147,7 @@ class TestApi(unittest.TestCase):
                     self.assertEqual(request.json, extended)
 
     def test_5_update_card(self):
-        """The update test of a new card."""
+        """Test. The creation test of a new card.The update test of a new card."""
         headers = {"UserName": "Kop", "UserSecret": "456"}
         x = (
                 ({
@@ -250,7 +249,7 @@ class TestApi(unittest.TestCase):
             self.assertEqual(resp_dict, {'assignee': 'Username', 'board': 'Новая доска'})
 
     def test_7_card_delete(self):
-        """The test of remove the card."""
+        """Test. The creation test of a new card.The test of remove the card."""
         headers = {"UserName": "Kop", "UserSecret": "456"}
         x = (
                 ({
@@ -277,7 +276,7 @@ class TestApi(unittest.TestCase):
                     self.assertEqual(request.json, extended)
 
     def test_8_board_delete(self):
-        """The test of remove the board."""
+        """Test. The creation test of a new card.The test of remove the board."""
         headers = {"UserName": "Kop", "UserSecret": "456"}
         x = (
                 ({"tle": "Новая доска"}, {"status": "Invalid request form 'data' of client."}),
