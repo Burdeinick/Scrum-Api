@@ -72,9 +72,9 @@ class RequestsDB:
 
     def request_authen_user(self, username: str, usersecret: str) -> list:
         """This method checking authentification user."""
-        request = f"SELECT username \
-                    FROM users      \
-                    WHERE (username='{username}') AND (password='{usersecret}')"
+        request = f"""SELECT username
+                    FROM users
+                    WHERE (username='{username}') AND (password='{usersecret}')"""
         self.connect_db.cursor.execute(request)
         return self.connect_db.cursor.fetchall()
 
@@ -87,22 +87,22 @@ class RequestsDB:
         last_updated_at = collecte_data[4]
         last_updated_by = collecte_data[5]
 
-        request = f"INSERT INTO boards(                  \
-                                        title,           \
-                                        columns,         \
-                                        created_at,      \
-                                        created_by,      \
-                                        last_updated_at, \
-                                        last_updated_by  \
-                                        )                \
-                    values(                         \
-                            '{title}',              \
-                            '{columns}',            \
-                            '{created_at}',         \
-                            '{created_by}',         \
-                            '{last_updated_at}',    \
-                            '{last_updated_by}'     \
-                            );"
+        request = f"""INSERT INTO boards(
+                                        title,
+                                        columns,
+                                        created_at,
+                                        created_by,
+                                        last_updated_at,
+                                        last_updated_by
+                                        )
+                    values(
+                            '{title}',
+                            '{columns}',
+                            '{created_at}',
+                            '{created_by}',
+                            '{last_updated_at}',
+                            '{last_updated_by}'
+                            );"""
 
         self.connect_db.cursor.execute(request)
         self.connect_db.conn.commit()
@@ -112,17 +112,17 @@ class RequestsDB:
 
     def request_one_board(self, title: str) -> list:
         """For checking this board."""
-        request = f"SELECT title    \
-                    FROM boards     \
-                    WHERE title='{title}'"
+        request = f"""SELECT title
+                    FROM boards
+                    WHERE title='{title}'"""
 
         self.connect_db.cursor.execute(request)
         return self.connect_db.cursor.fetchall()
 
     def request_delete_board(self, title: str):
-        """ """
-        request = f"DELETE FROM boards    \
-                    WHERE title='{title}';"
+        """For remoove this board """
+        request = f"""DELETE FROM boards
+                    WHERE title='{title}';"""
         self.connect_db.cursor.execute(request)
         self.connect_db.conn.commit()
         if self.connect_db.cursor.statusmessage == "DELETE 1":
@@ -131,30 +131,30 @@ class RequestsDB:
 
     def request_get_all_boards(self) -> list:
         """This method returns list of the boards."""
-        request = f"SELECT title,               \
-                            columns,            \
-                            created_at,         \
-                            created_by,         \
-                            last_updated_at,    \
-                            last_updated_by     \
-                    FROM boards"
+        request = f"""SELECT title,
+                            columns,
+                            created_at,
+                            created_by,
+                            last_updated_at,
+                            last_updated_by
+                    FROM boards"""
         self.connect_db.cursor.execute(request)
         return self.connect_db.cursor.fetchall()
 
     def request_title_board(self, title: str, board: str) -> list:
         """The method checking 'title' and 'board' in one string."""
-        request = f"SELECT title,               \
-                            board,              \
-                            status,             \
-                            description,        \
-                            assignee,           \
-                            estimation,         \
-                            created_at,         \
-                            created_by,         \
-                            last_updated_at,    \
-                            last_updated_by     \
-                    FROM cards                  \
-                    WHERE (title='{title}') AND (board='{board}')"
+        request = f"""SELECT title,
+                            board,
+                            status,
+                            description,
+                            assignee,
+                            estimation,
+                            created_at,
+                            created_by,
+                            last_updated_at,
+                            last_updated_by
+                    FROM cards
+                    WHERE (title='{title}') AND (board='{board}')"""
         self.connect_db.cursor.execute(request)
         return self.connect_db.cursor.fetchall()
 
@@ -171,30 +171,30 @@ class RequestsDB:
         last_updated_at = collecte_data[8]
         last_updated_by = collecte_data[9]
 
-        request = f"INSERT INTO cards(                      \
-                                        title,              \
-                                        board,              \
-                                        status,             \
-                                        description,        \
-                                        assignee,           \
-                                        estimation,         \
-                                        created_at,         \
-                                        created_by,         \
-                                        last_updated_at,    \
-                                        last_updated_by     \
-                                        )           \
-                    values(                         \
-                            '{title}',              \
-                            '{board}',              \
-                            '{status}',             \
-                            '{description}',        \
-                            '{assignee}',           \
-                            '{estimation}',         \
-                            '{created_at}',         \
-                            '{created_by}',         \
-                            '{last_updated_at}',    \
-                            '{last_updated_by}'     \
-                            )"
+        request = f"""INSERT INTO cards(
+                                        title,
+                                        board,
+                                        status,
+                                        description,
+                                        assignee,
+                                        estimation,
+                                        created_at,
+                                        created_by,
+                                        last_updated_at,
+                                        last_updated_by
+                                        )
+                    values(
+                            '{title}',
+                            '{board}',
+                            '{status}',
+                            '{description}',
+                            '{assignee}',
+                            '{estimation}',
+                            '{created_at}',
+                            '{created_by}',
+                            '{last_updated_at}',
+                            '{last_updated_by}'
+                            )"""
 
         self.connect_db.cursor.execute(request)
         self.connect_db.conn.commit()
