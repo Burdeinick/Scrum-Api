@@ -43,12 +43,12 @@ def card_create():
     url = r'http://127.0.0.1:5000/api/v1/card/create'
     headers = {"UserName": "Kop", "UserSecret": "456"}
     data = {
-                "title": "Карточка 3",
-                "board": "Новая доска",
-                "status": "Noooo",
-                "description": "Необходимо проверить",
-                "assignee": "Username",
-                "estimation": "4hd"
+            "title": "Карточка 3",
+            "board": "Новая доска",
+            "status": "Noooo",
+            "description": "Необходимо проверить",
+            "assignee": "Username",
+            "estimation": "4hd"
             }
     requests.post(url, json=data, headers=headers) 
 
@@ -58,13 +58,13 @@ def card_update():
     url = r'http://127.0.0.1:5000/api/v1/card/update'
     headers = {"UserName": "Kop", "UserSecret": "456"}
     data = {
-                "title": "Карточка 1",
-                "board": "Новая доска",
-                "status": "ToDo",
-                "description": "New description",
-                "assignee": "Bob",
-                "estimation": "7p"
-                }
+            "title": "Карточка 1",
+            "board": "Новая доска",
+            "status": "ToDo",
+            "description": "New description",
+            "assignee": "Bob",
+            "estimation": "7p"
+            }
     requests.post(url, json=data, headers=headers) 
 
 
