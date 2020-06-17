@@ -7,8 +7,8 @@ from datetime import datetime
 class Statuses:
     """The statuses of answers is here."""
     def __init__(self):
-        self.aut_error = {"status":"Authentification Error."}
-        self.user_no_avaib = {"status": "No users available"} 
+        self.aut_error = {"status": "Authentification Error."}
+        self.user_no_avaib = {"status": "No users available"}
         self.such_board_exists = {"status": "This a board already exist."}
         self.board_create = {"status": "The board is created."}
         self.board_not_create = {"status": "The new board was don't created."}
@@ -37,7 +37,7 @@ class ConnectionDB:
         self.dbname, self.user, self.password = self.get_config_db()
         self.conn = psycopg2.connect(dbname=self.dbname, user=self.user, password=self.password)
         self.cursor = self.conn.cursor()
-        
+
     def get_config_db(self):
         """This method getting of configuration files, such as
             'host',
@@ -45,7 +45,7 @@ class ConnectionDB:
             'dbname',
             'user',
             'password'.
-        
+
          """
         with open('Application/config.json') as config:
             json_str = config.read()
@@ -70,7 +70,7 @@ class RequestsDB:
         self.connect_db.cursor.execute("SELECT username FROM users")
         return self.connect_db.cursor.fetchall()
 
-    def request_authen_user(self, username: str, usersecret: str ) -> list:
+    def request_authen_user(self, username: str, usersecret: str) -> list:
         """This method checking authentification user."""
         request = f"SELECT username \
                     FROM users      \
@@ -104,7 +104,7 @@ class RequestsDB:
                             '{last_updated_by}'     \
                             );"
 
-        self.connect_db.cursor.execute(request)                                       
+        self.connect_db.cursor.execute(request)
         self.connect_db.conn.commit()
         if self.connect_db.cursor.statusmessage == "INSERT 0 1":
             return True
@@ -116,14 +116,14 @@ class RequestsDB:
                     FROM boards     \
                     WHERE title='{title}'"
 
-        self.connect_db.cursor.execute(request)                                       
+        self.connect_db.cursor.execute(request)
         return self.connect_db.cursor.fetchall()
 
     def request_delete_board(self, title: str):
         """ """
         request = f"DELETE FROM boards    \
                     WHERE title='{title}';"
-        self.connect_db.cursor.execute(request)                                       
+        self.connect_db.cursor.execute(request)
         self.connect_db.conn.commit()
         if self.connect_db.cursor.statusmessage == "DELETE 1":
             return True
@@ -138,7 +138,7 @@ class RequestsDB:
                             last_updated_at,    \
                             last_updated_by     \
                     FROM boards"
-        self.connect_db.cursor.execute(request)                                       
+        self.connect_db.cursor.execute(request)
         return self.connect_db.cursor.fetchall()
 
     def request_title_board(self, title: str, board: str) -> list:
@@ -155,7 +155,7 @@ class RequestsDB:
                             last_updated_by     \
                     FROM cards                  \
                     WHERE (title='{title}') AND (board='{board}')"
-        self.connect_db.cursor.execute(request)                                       
+        self.connect_db.cursor.execute(request)
         return self.connect_db.cursor.fetchall()
 
     def request_create_card(self, collecte_data: tuple) -> bool:
@@ -196,7 +196,7 @@ class RequestsDB:
                             '{last_updated_by}'     \
                             )"
 
-        self.connect_db.cursor.execute(request)                                       
+        self.connect_db.cursor.execute(request)
         self.connect_db.conn.commit()
 
         if self.connect_db.cursor.statusmessage == "INSERT 0 1":
@@ -215,17 +215,17 @@ class RequestsDB:
         created_by = collecte_data[7]
         last_updated_at = collecte_data[8]
 
-        last_updated_by = collecte_data[9]   
-        request = f"UPDATE cards                                \
-                    SET status = '{status}',                    \
-                        description = '{description}',          \
-                        assignee = '{assignee}',                \
-                        estimation = '{estimation}',            \
-                        created_at = '{created_at}',            \
-                        created_by = '{created_by}',            \
-                        last_updated_at = '{last_updated_at}',  \
-                        last_updated_by = '{last_updated_by}'   \
-                        WHERE(title='{title}') AND (board='{board}')"
+        last_updated_by = collecte_data[9]
+        request = f"""UPDATE cards
+                    SET status = '{status}',
+                        description = '{description}',
+                        assignee = '{assignee}',
+                        estimation = '{estimation}',
+                        created_at = '{created_at}',
+                        created_by = '{created_by}',
+                        last_updated_at = '{last_updated_at}',
+                        last_updated_by = '{last_updated_by}'
+                        WHERE(title='{title}') AND (board='{board}')"""
 
         self.connect_db.cursor.execute(request)
         self.connect_db.conn.commit()
@@ -233,11 +233,11 @@ class RequestsDB:
         if respons == "UPDATE 1":
             return True
         return False
- 
+
     def request_card_delete(self, title: str, board: str) -> bool:
         """For request about delete a card."""
-        request = f"DELETE FROM cards \
-                    WHERE (title='{title}') AND (board='{board}')"
+        request = f"""DELETE FROM cards
+                    WHERE (title='{title}') AND (board='{board}')"""
         self.connect_db.cursor.execute(request)
         self.connect_db.conn.commit()
         respons = self.connect_db.cursor.statusmessage
@@ -247,20 +247,20 @@ class RequestsDB:
 
     def request_info_column(self, board: str, status: str, assignee: str) -> list:
         """For request about the column."""
-        request = f"SELECT title,       \
-                    board,              \
-                    status,             \
-                    description,        \
-                    assignee,           \
-                    estimation,         \
-                    created_at,         \
-                    created_by,         \
-                    last_updated_at,    \
-                    last_updated_by     \
-                    FROM cards          \
-                    WHERE (board='{board}') AND (status='{status}') AND (assignee='{assignee}');"
-        self.connect_db.cursor.execute(request)                                       
-        return self.connect_db.cursor.fetchall() 
+        request = f"""SELECT title,
+                    board,
+                    status,
+                    description,
+                    assignee,
+                    estimation,
+                    created_at,
+                    created_by,
+                    last_updated_at,
+                    last_updated_by
+                    FROM cards
+                    WHERE (board='{board}') AND (status='{status}') AND (assignee='{assignee}');"""
+        self.connect_db.cursor.execute(request)
+        return self.connect_db.cursor.fetchall()
 
 
 class UsingDB:
@@ -298,7 +298,7 @@ class UsingDB:
             colums = str(' '.join(data["columns"]))
             created_at = str(int(time.time()))
             created_by = str(username)
-            last_updated_at =  str(int(time.time()))
+            last_updated_at = str(int(time.time()))
             last_updated_by = str(username)
         except KeyError:
             return self.stat.invalid_data
@@ -326,7 +326,7 @@ class UsingDB:
         respons_db = self.req_DB.request_one_board(title)
         if not respons_db:
             return self.stat.board_not_exist
-        respons_db_del = self.req_DB.request_delete_board(title)   
+        respons_db_del = self.req_DB.request_delete_board(title)
         if respons_db_del:
             return self.stat.board_delete
         return self.stat.board_not_delete
@@ -356,7 +356,7 @@ class UsingDB:
 
     def __check_char(self, estim: str) -> bool:
         """This method checking of characters 'estimation'.
-        
+
         If 'estimation' will for example '4hh' or '2', - > False
 
         """
@@ -377,7 +377,7 @@ class UsingDB:
             assignee = str(data["assignee"])
             estimation = str(data["estimation"])
             if self.__check_char(estimation):
-                return self.stat.invalid_inp_estim 
+                return self.stat.invalid_inp_estim
             try:
                 if estimation[-1:] not in ['m', 'w', 'd', 'h']:
                     return self.stat.invalid_inp_estim
@@ -400,19 +400,16 @@ class UsingDB:
                          created_by,
                          last_updated_at,
                          last_updated_by,
-                        ) 
-        # проверка существования такой доски 
+                        )
         respons_db_board = self.req_DB.request_one_board(board)
         if not respons_db_board:
             return self.stat.card_not_create_board
-        # проверка если есть уже такая карта с такой доской
         respons_db_card = self.req_DB.request_title_board(title, board)
         if respons_db_card:
             return self.stat.such_card_exist
-        # создается доска
         response_db_create_card = self.req_DB.request_create_card(collecte_data)
         if response_db_create_card:
-             return self.stat.card_create
+            return self.stat.card_create
         return self.stat.card_not_create
 
     def update_card(self, data: dict, head: dict) -> dict:
@@ -469,9 +466,9 @@ class UsingDB:
         collecte_data.append(username)
         respons_to_serv = self.req_DB.request_card_update(collecte_data)
         if respons_to_serv:
-            return self.stat.card_update 
+            return self.stat.card_update
         return self.stat.card_not_update
-        
+
     def card_delete(self, data: dict) -> dict:
         """For delete a card."""
         try:
@@ -484,7 +481,7 @@ class UsingDB:
             return self.stat.card_not_exist
         response_db_card_delete = self.req_DB.request_card_delete(title, board)
         if response_db_card_delete:
-            return self.stat.card_delete 
+            return self.stat.card_delete
         return self.stat.card_not_delete
 
     def column_info(self, data: dict) -> dict:
@@ -513,8 +510,8 @@ class UsingDB:
                         "board": card[1],
                         "status": card[2],
                         "description": card[3],
-                        "assignee": card[4], 
-                        "estimation": card[5], 
+                        "assignee": card[4],
+                        "estimation": card[5],
                         "created_at": str(datetime.fromtimestamp(int(card[6]))),
                         "created_by": card[7],
                         "last_updated_at": str(datetime.fromtimestamp(int(card[8]))),
@@ -523,8 +520,8 @@ class UsingDB:
             response_to_serv["cards"].append(card_dict)
             obj_estim2 = Estimation(card[5])
             self.obj_estim1 += obj_estim2
-        obj_sum_estim = SumEstimation(self.obj_estim1)  
-        response_to_serv["estimation"] = obj_sum_estim.response 
+        obj_sum_estim = SumEstimation(self.obj_estim1)
+        response_to_serv["estimation"] = obj_sum_estim.response
         return response_to_serv
 
 
@@ -560,6 +557,7 @@ class Estimation:
         instance = str(int(other.val_hour) + int(self.val_hour)) + 'h'
         return Estimation(instance)
 
+
 class SumEstimation:
     """The class for calculation the sum of ratings
     for all tasks assigned to the performer in this column.
@@ -575,10 +573,10 @@ class SumEstimation:
         int_part = value // 160
         if int_part:
             self.response += f"{int_part}m"
-            remain = value % 160 
+            remain = value % 160
             self.week(remain)
             return
-        self.week(value)  
+        self.week(value)
 
     def week(self, value):
         """The processing of weeks."""

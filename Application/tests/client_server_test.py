@@ -7,7 +7,7 @@ import json
 
 class TestApi(unittest.TestCase):
     """This class for the testing of Api.
-    
+
     The checking the interaction of client requests and server responses.
 
     """
@@ -37,7 +37,7 @@ class TestApi(unittest.TestCase):
                             "InProgress",
                             "Done"
                             ]
-                }, {"status": "The board is created."}),
+            }, {"status": "The board is created."}),
 
             ({"itle": 'Новая доска',
                 "columns": [
