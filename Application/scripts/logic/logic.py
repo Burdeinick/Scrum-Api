@@ -15,7 +15,7 @@ class Statuses:
         self.board_delete = {"status": "The board is removed."}
         self.board_not_delete = {"status": "The board was don't delete."}
         self.board_not_exist = {"status": "This a board does not exist."}
-        self.boards_not_exist = {"Status": "A boards don't exist."}
+        self.boards_not_exist = {"status": "A boards don't exist."}
         self.such_card_exist = {"status": "This a card already exist at this board."}
         self.card_create = {"status": "The card is created."}
         self.card_not_create = {"status": "The new card was don't created."}
@@ -40,11 +40,11 @@ class ConnectionDB:
 
     def get_config_db(self):
         """This method getting of configuration files, such as
-            'host',
-            'port',
-            'dbname',
-            'user',
-            'password'.
+        'host',
+        'port',
+        'dbname',
+        'user',
+        'password'.
 
          """
         with open('Application/config.json') as config:
@@ -111,7 +111,7 @@ class RequestsDB:
         return False
 
     def request_one_board(self, title: str) -> list:
-        """For checking this board."""
+        """The method for checking this board."""
         request = f"""SELECT title
                     FROM boards
                     WHERE title='{title}'"""
@@ -120,7 +120,7 @@ class RequestsDB:
         return self.connect_db.cursor.fetchall()
 
     def request_delete_board(self, title: str):
-        """For remoove this board """
+        """The method for remoove this board """
         request = f"""DELETE FROM boards
                     WHERE title='{title}';"""
         self.connect_db.cursor.execute(request)
@@ -264,11 +264,23 @@ class RequestsDB:
 
 
 class UsingDB:
-    """ """
+    """The class for linking the "Server" class and the "RequestsDB" class"."""
     def __init__(self, data=None):
         self.data = data
         self.req_DB = RequestsDB()
         self.stat = Statuses()
+
+    def __check_char(self, estim: str) -> bool:
+        """This method checking of characters 'estimation'.
+
+        If 'estimation' will for example '4hh' or '2', - > False
+
+        """
+        estimation = estim
+        char = [str(i) for i in estimation if i.isalpha()]
+        if len(char) != 1:
+            return True
+        return False
 
     def autefication_users(self, name_secret: tuple) -> bool:
         """For authentification of the users."""
@@ -353,18 +365,6 @@ class UsingDB:
             response_to_serv["count"] = count
             response_to_serv["boards"].append(d_board)
         return response_to_serv
-
-    def __check_char(self, estim: str) -> bool:
-        """This method checking of characters 'estimation'.
-
-        If 'estimation' will for example '4hh' or '2', - > False
-
-        """
-        estimation = estim
-        char = [str(i) for i in estimation if i.isalpha()]
-        if len(char) != 1:
-            return True
-        return False
 
     def create_cards(self, data: dict, head: dict) -> dict:
         """For create a new card."""

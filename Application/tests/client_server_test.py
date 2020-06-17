@@ -1,8 +1,8 @@
 import unittest
 import sys
+import json
 sys.path.insert(0, 'Application')
 from scripts.server.server import app
-import json
 
 
 class TestApi(unittest.TestCase):
@@ -15,7 +15,7 @@ class TestApi(unittest.TestCase):
         """It must get all the users."""
         x = (
             ({"UserName": "Kop", "UserSecret": "456"}, ({'users': [{'username': 'Kop'}]})),
-            ({"UserNam": "Kop", "UserSecret": "456"}, ({"status":"Authentification Error."})),
+            ({"UserNam": "Kop", "UserSecret": "456"}, ({"status": "Authentification Error."})),
             ({"UserName": "Kop", "serSecret": "456"}, ({"status": "Authentification Error."})),
             ({"": "Kop", "UserSecret": "456"}, ({"status": "Authentification Error."})),
             ({0: "Kop", "UserSecret": "456"}, ({"status": "Authentification Error."}))
@@ -31,29 +31,31 @@ class TestApi(unittest.TestCase):
         """The creation of a board."""
         headers = {"UserName": "Kop", "UserSecret": "456"}
         x = (
+                ({"title": 'Новая доска',
+                    "columns": [
+                                "ToDo",
+                                "InProgress",
+                                "Done"
+                                ]
+                  }, {"status": "The board is created."}
+                 ),
+
+                ({"itle": 'Новая доска',
+                    "columns": [
+                                "ToDo",
+                                "InProgress",
+                                "Done"
+                                ]
+                  }, {"status": "Invalid request form 'data' of client."}
+                 ),
+
             ({"title": 'Новая доска',
                 "columns": [
                             "ToDo",
                             "InProgress",
                             "Done"
                             ]
-            }, {"status": "The board is created."}),
-
-            ({"itle": 'Новая доска',
-                "columns": [
-                            "ToDo",
-                            "InProgress",
-                            "Done"
-                            ]
-                }, {"status": "Invalid request form 'data' of client."}),
-
-            ({"title": 'Новая доска',
-                "columns": [
-                            "ToDo",
-                            "InProgress",
-                            "Done"
-                            ]
-                }, {'status': 'This a board already exist.'})
+              }, {'status': 'This a board already exist.'})
 
             )
         for value in x:
@@ -83,56 +85,60 @@ class TestApi(unittest.TestCase):
         """
         headers = {"UserName": "Kop", "UserSecret": "456"}
         x = (
-            ({
-                "title": "Карточка 1",
-                "board": "Новая доска",
-                "status": "Noooo",
-                "description": "Необходимо проверить",
-                "assignee": "Username",
-                "estimation": "4w"
-                }, {"status": "The card is created."}),
-            ({
-                "itle": "Карточка 1",
-                "board": "Новая доска",
-                "status": "Noooo",
-                "description": "Необходимо проверить",
-                "assignee": "Username",
-                "estimation": "4w"
-                }, {"status": "Invalid request form 'data' of client."}),
-            ({
-                "title": "Карточка 1",
-                "board": "Не известная доска",
-                "status": "Noooo",
-                "description": "Необходимо проверить",
-                "assignee": "Username",
-                "estimation": "4w"
-                }, {"status": "The new card was don't created, such board no exist."}),
-            ({
-                "title": "Карточка 1",
-                "board": "Новая доска",
-                "status": "Noooo",
-                "description": "Необходимо проверить",
-                "assignee": "Username",
-                "estimation": "4w"
-                }, {"status": "This a card already exist at this board."}),
-            ({
-                "title": "Карточка 1",
-                "board": "Новая доска",
-                "status": "Noooo",
-                "description": "Необходимо проверить",
-                "assignee": "Username",
-                "estimation": "4"
-                }, {"status": "Invalid 'estimation'. Please repair the field 'estimation'."}),
-
-            ({
-                "title": "Карточка 1",
-                "board": "Новая доска",
-                "status": "Noooo",
-                "description": "Необходимо проверить",
-                "assignee": "Username",
-                "estimation": "4hd"
-                }, {"status": "Invalid 'estimation'. Please repair the field 'estimation'."}),
-
+                ({
+                    "title": "Карточка 1",
+                    "board": "Новая доска",
+                    "status": "Noooo",
+                    "description": "Необходимо проверить",
+                    "assignee": "Username",
+                    "estimation": "4w"
+                    }, {"status": "The card is created."}
+                 ),
+                ({
+                    "itle": "Карточка 1",
+                    "board": "Новая доска",
+                    "status": "Noooo",
+                    "description": "Необходимо проверить",
+                    "assignee": "Username",
+                    "estimation": "4w"
+                    }, {"status": "Invalid request form 'data' of client."}
+                 ),
+                ({
+                    "title": "Карточка 1",
+                    "board": "Не известная доска",
+                    "status": "Noooo",
+                    "description": "Необходимо проверить",
+                    "assignee": "Username",
+                    "estimation": "4w"
+                    }, {"status": "The new card was don't created, such board no exist."}
+                 ),
+                ({
+                    "title": "Карточка 1",
+                    "board": "Новая доска",
+                    "status": "Noooo",
+                    "description": "Необходимо проверить",
+                    "assignee": "Username",
+                    "estimation": "4w"
+                    }, {"status": "This a card already exist at this board."}
+                 ),
+                ({
+                    "title": "Карточка 1",
+                    "board": "Новая доска",
+                    "status": "Noooo",
+                    "description": "Необходимо проверить",
+                    "assignee": "Username",
+                    "estimation": "4"
+                    }, {"status": "Invalid 'estimation'. Please repair the field 'estimation'."}
+                 ),
+                ({
+                    "title": "Карточка 1",
+                    "board": "Новая доска",
+                    "status": "Noooo",
+                    "description": "Необходимо проверить",
+                    "assignee": "Username",
+                    "estimation": "4hd"
+                    }, {"status": "Invalid 'estimation'. Please repair the field 'estimation'."}
+                 ),
             )
         for value in x:
             data, extended = value
@@ -145,79 +151,87 @@ class TestApi(unittest.TestCase):
         """The update test of a new card."""
         headers = {"UserName": "Kop", "UserSecret": "456"}
         x = (
-            ({
-                "title": "Карточка 1",
-                "board": "Новая доска",
-                "status": "ToDo",
-                }, {"status": "The card has updated."}),
-            ({
-                "title": "Карточка 1",
-                "oard": "Новая доска",
-                "status": "ToDo",
-                }, {"status": "Invalid request form 'data' of client."}),
-            ({
-                "title": "Карточка 1",
-                "board": "Новая доска",
-                "status": "ToDo",
-                "description": "New description",
-                "assignee": "Username",
-                "estimation": "7w"
-                }, {"status": "The card has updated."}),
-            ({
-                "title": "Карточка 1",
-                "board": "Новая доска",
-                "status": "ToDo",
-                "description": "New description",
-                "assignee": "Username",
-                "estimation": "7P"
-                }, {"status": "Invalid 'estimation'. Please repair the field 'estimation'."}),
-            ({
-                "title": "Карточка 1",
-                "board": "Такой доски нет",
-                "status": "ToDo",
-                }, {"status": "The 'Board' and the 'title' have not match."}),     
-            ({
-                "title": "Карточка 1",
-                "board": "Новая доска",
-                "status": "Noooo",
-                "description": "Необходимо проверить",
-                "assignee": "Username",
-                "estimation": "4hd"
-                }, {"status": "Invalid 'estimation'. Please repair the field 'estimation'."}),
-            ({
-                "title": "Карточка 1",
-                "board": "Новая доска",
-                "status": "Noooo",
-                "description": "Необходимо проверить",
-                "assignee": "Username",
-                "estimation": "414"
-                }, {"status": "Invalid 'estimation'. Please repair the field 'estimation'."}),
+                ({
+                    "title": "Карточка 1",
+                    "board": "Новая доска",
+                    "status": "ToDo",
+                  }, {"status": "The card has updated."}
+                 ),
+                ({
+                    "title": "Карточка 1",
+                    "oard": "Новая доска",
+                    "status": "ToDo",
+                  }, {"status": "Invalid request form 'data' of client."}
+                 ),
+                ({
+                    "title": "Карточка 1",
+                    "board": "Новая доска",
+                    "status": "ToDo",
+                    "description": "New description",
+                    "assignee": "Username",
+                    "estimation": "7w"
+                  }, {"status": "The card has updated."}
+                 ),
+                ({
+                    "title": "Карточка 1",
+                    "board": "Новая доска",
+                    "status": "ToDo",
+                    "description": "New description",
+                    "assignee": "Username",
+                    "estimation": "7P"
+                  }, {"status": "Invalid 'estimation'. Please repair the field 'estimation'."}
+                 ),
+                ({
+                    "title": "Карточка 1",
+                    "board": "Такой доски нет",
+                    "status": "ToDo",
+                  }, {"status": "The 'Board' and the 'title' have not match."}
+                 ),
+                ({
+                    "title": "Карточка 1",
+                    "board": "Новая доска",
+                    "status": "Noooo",
+                    "description": "Необходимо проверить",
+                    "assignee": "Username",
+                    "estimation": "4hd"
+                  }, {"status": "Invalid 'estimation'. Please repair the field 'estimation'."}
+                 ),
+                ({
+                    "title": "Карточка 1",
+                    "board": "Новая доска",
+                    "status": "Noooo",
+                    "description": "Необходимо проверить",
+                    "assignee": "Username",
+                    "estimation": "414"
+                  }, {"status": "Invalid 'estimation'. Please repair the field 'estimation'."}
+                 ),
             )
         for value in x:
             data, extended = value
             with app.test_client() as client:
-                request = client.post('api/v1/card/update',headers=headers, json=data)
+                request = client.post('api/v1/card/update', headers=headers, json=data)
                 with self.subTest(x=value):
                     self.assertEqual(request.json, extended)
 
     def test_6_column_info(self):
         """Test. Этот отчет позволяет получить информацию о задачах, которые находятся в определенной
         колонке.
-        
+
         """
         headers = {"UserName": "Kop", "UserSecret": "456"}
         x = (
-            ({
-                "oard": "Новая доска",
-                "column": "ToDo",
-                "assignee": "Username"
-            }, {"status": "Invalid request form 'data' of client."}),
-            ({
-                "board": "Новая доска",
-                "column": "ToDo",
-                "assignee": "Othet name"
-                }, {"status": "The information about these columns are absent."})
-
+                ({
+                    "oard": "Новая доска",
+                    "column": "ToDo",
+                    "assignee": "Username"
+                  }, {"status": "Invalid request form 'data' of client."}
+                 ),
+                ({
+                    "board": "Новая доска",
+                    "column": "ToDo",
+                    "assignee": "Othet name"
+                  }, {"status": "The information about these columns are absent."}
+                 )
             )
         for value in x:
             data, extended = value
@@ -239,18 +253,21 @@ class TestApi(unittest.TestCase):
         """The test of remove the card."""
         headers = {"UserName": "Kop", "UserSecret": "456"}
         x = (
-            ({
-                "itle": "Карточка 1",
-                "board": "Новая доска"
-                }, {"status": "Invalid request form 'data' of client."}),
-            ({
-                "title": "Какая-то карточка",
-                "board": "Новая доска"
-                }, {"status": "The card does not exist."}),
-            ({
-                "title": "Карточка 1",
-                "board": "Новая доска"
-                }, {"status": "The card is removed."})
+                ({
+                    "itle": "Карточка 1",
+                    "board": "Новая доска"
+                  }, {"status": "Invalid request form 'data' of client."}
+                 ),
+                ({
+                    "title": "Какая-то карточка",
+                    "board": "Новая доска"
+                  }, {"status": "The card does not exist."}
+                 ),
+                ({
+                    "title": "Карточка 1",
+                    "board": "Новая доска"
+                  }, {"status": "The card is removed."}
+                 )
             )
         for value in x:
             data, extended = value
@@ -263,9 +280,9 @@ class TestApi(unittest.TestCase):
         """The test of remove the board."""
         headers = {"UserName": "Kop", "UserSecret": "456"}
         x = (
-            ({"tle": "Новая доска"}, {"status": "Invalid request form 'data' of client."}),
-            ({"title": "Какая-то доска"}, {"status": "This a board does not exist."}),
-            ({"title": "Новая доска"}, {"status": "The board is removed."} )
+                ({"tle": "Новая доска"}, {"status": "Invalid request form 'data' of client."}),
+                ({"title": "Какая-то доска"}, {"status": "This a board does not exist."}),
+                ({"title": "Новая доска"}, {"status": "The board is removed."})
             )
         for value in x:
             data, extended = value
@@ -277,5 +294,6 @@ class TestApi(unittest.TestCase):
 
 def test_server_run():
     unittest.main()
+
 
 test_server_run()
