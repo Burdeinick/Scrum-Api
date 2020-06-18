@@ -34,9 +34,7 @@ The POST request headers are passed for all api methods: UserName - name of the 
 4. Run these commands in bash:
 
         $ make build
-        ok
         $ make test
-        ok
         $ make run
 
 After that, the server will be started and the api is ready to work.
