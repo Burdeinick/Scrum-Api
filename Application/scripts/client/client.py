@@ -73,10 +73,10 @@ def card_delete():
     url = r'http://127.0.0.1:5000/api/v1/card/delete'
     headers = {"UserName": "Kop", "UserSecret": "456"}
     data = {
-                "title": "Карточка 1",
-                "board": "Новая доска",
-                "status": "ToDo",
-                }
+            "title": "Карточка 1",
+            "board": "Новая доска",
+            "status": "ToDo",
+            }
     requests.post(url, json=data, headers=headers) 
 
 
@@ -95,7 +95,7 @@ def colum_info():
 # board_create()
 # board_delete()
 # board_list()
-card_create()
+# card_create()
 # card_update()
 # card_delete()
 # colum_info()

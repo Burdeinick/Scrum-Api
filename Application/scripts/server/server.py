@@ -14,7 +14,6 @@ def authentific(headers: dict) -> bool:
         usersecret = request.headers['UserSecret']
         autenf_data = (username, usersecret)
     except KeyError:
-        print("Error: invalid request form 'UserName' or 'UserSecret'.")
         return False
     if UsingDB().autefication_users(autenf_data):
         print(f"User '{username}' have authenticated.")

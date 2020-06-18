@@ -62,8 +62,8 @@ def create_cards():
 def add_user():
     with psycopg2.connect(dbname=dbname, user=user, password=password) as conn:
         with conn.cursor() as cursor:
-            request = "INSERT INTO users (username, password)   \
-                        VALUES ('Kop', '456')"
+            request = """INSERT INTO users (username, password)
+                        VALUES ('Kop', '456')"""
             cursor.execute(request)
             conn.commit()
 
