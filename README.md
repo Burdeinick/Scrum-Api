@@ -19,7 +19,7 @@ The POST request headers are passed for all api methods: UserName - name of the 
 * In case of an identification error: `{"status": "Authentification Error."}`
   
 ## Getting Started
-All steps are described for Windows OS.
+
 1. Install all dependencies `$ pip install -r requirements.txt`
 2. Start the database server PostgreSQL.
 3. In the file config.json fill in the parameters of the database and server:
