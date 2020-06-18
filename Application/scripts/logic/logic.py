@@ -439,7 +439,6 @@ class UsingDB:
             description = data.get("description")
             assignee = data.get("assignee")
             estimation = data.get("estimation")
-
         except KeyError:
             return self.stat.invalid_data
 
@@ -511,7 +510,7 @@ class UsingDB:
         self.obj_estim1 = Estimation('0h')
         if not response_db:
             return self.stat.colum_not_info
-            
+
         response_to_serv = {
                             "board": board,
                             "column": column,
