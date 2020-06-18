@@ -280,6 +280,11 @@ class UsingDB:
         char = [str(i) for i in estimation if i.isalpha()]
         if len(char) != 1:
             return True
+        try:
+            if estimation[-1:] not in ['m', 'w', 'd', 'h']:
+                return True
+        except IndexError:
+            return True
         return False
 
     def autefication_users(self, name_secret: tuple) -> bool:
@@ -378,11 +383,6 @@ class UsingDB:
             estimation = str(data["estimation"])
             if self.__check_char(estimation):
                 return self.stat.invalid_inp_estim
-            try:
-                if estimation[-1:] not in ['m', 'w', 'd', 'h']:
-                    return self.stat.invalid_inp_estim
-            except IndexError:
-                self.stat.invalid_inp_estim
             created_at = int(time.time())
             created_by = str(username)
             last_updated_at = int(time.time())
@@ -448,18 +448,13 @@ class UsingDB:
             collecte_data.append(assignee)
         else:
             collecte_data.append(card[4])
-        try:
-            if estimation != None:
-                if self.__check_char(estimation):
-                    return self.stat.invalid_inp_estim
-                if estimation[-1:] not in ['m', 'w', 'd', 'h']:
-                    return self.stat.invalid_inp_estim
-                else:
-                    collecte_data.append(estimation)
+        if estimation != None:
+            if self.__check_char(estimation):
+                return self.stat.invalid_inp_estim
             else:
-                collecte_data.append(card[5])
-        except IndexError:
-            return self.stat.invalid_inp_estim
+                collecte_data.append(estimation)
+        else:
+            collecte_data.append(card[5])
         collecte_data.append(card[6])
         collecte_data.append(card[7])
         collecte_data.append(int(time.time()))

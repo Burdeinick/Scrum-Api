@@ -17,9 +17,9 @@ def authentific(headers: dict) -> bool:
         print("Error: invalid request form 'UserName' or 'UserSecret'.")
         return False
     if UsingDB().autefication_users(autenf_data):
-        print(f"Пользователь '{username}' прошел аутентификацию.")
+        print(f"User '{username}' have authenticated.")
         return True
-    print(f"Пользователь '{username}' не прошел аутентификацию.")
+    print(f"User '{username}' do not have authenticated.")
     return False
 
 
