@@ -73,6 +73,5 @@ def main():
     create_boards()
     create_cards()
     add_user()
-    print('Ok')
 
 main()

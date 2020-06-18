@@ -280,11 +280,13 @@ class UsingDB:
         char = [str(i) for i in estimation if i.isalpha()]
         if len(char) != 1:
             return True
+
         try:
             if estimation[-1:] not in ['m', 'w', 'd', 'h']:
                 return True
         except IndexError:
-            return True
+            return True 
+
         return False
 
     def autefication_users(self, name_secret: tuple) -> bool:
@@ -319,6 +321,7 @@ class UsingDB:
             last_updated_by = str(username)
         except KeyError:
             return self.stat.invalid_data
+
         collecte_data = (
                          title,
                          colums,
@@ -330,6 +333,7 @@ class UsingDB:
         resp_db = self.req_DB.request_one_board(title)
         if resp_db:
             return self.stat.such_board_exists
+
         if self.req_DB.request_create_board(collecte_data):
             return self.stat.board_create
         return self.stat.board_not_create
@@ -340,9 +344,11 @@ class UsingDB:
             title = str(data["title"])
         except KeyError:
             return self.stat.invalid_data
+
         respons_db = self.req_DB.request_one_board(title)
         if not respons_db:
             return self.stat.board_not_exist
+
         respons_db_del = self.req_DB.request_delete_board(title)
         if respons_db_del:
             return self.stat.board_delete
@@ -353,6 +359,7 @@ class UsingDB:
         respons_db = self.req_DB.request_get_all_boards()
         if not respons_db:
             return self.stat.boards_not_exist
+
         response_to_serv = {"count": None, "boards": []}
         for values in respons_db:
             count = str(len(respons_db))
@@ -383,12 +390,14 @@ class UsingDB:
             estimation = str(data["estimation"])
             if self.__check_char(estimation):
                 return self.stat.invalid_inp_estim
+
             created_at = int(time.time())
             created_by = str(username)
             last_updated_at = int(time.time())
             last_updated_by = str(username)
         except KeyError:
             return self.stat.invalid_data
+
         collecte_data = (
                          title,
                          board,
@@ -404,9 +413,11 @@ class UsingDB:
         respons_db_board = self.req_DB.request_one_board(board)
         if not respons_db_board:
             return self.stat.card_not_create_board
+
         respons_db_card = self.req_DB.request_title_board(title, board)
         if respons_db_card:
             return self.stat.such_card_exist
+
         response_db_create_card = self.req_DB.request_create_card(collecte_data)
         if response_db_create_card:
             return self.stat.card_create
@@ -431,9 +442,11 @@ class UsingDB:
 
         except KeyError:
             return self.stat.invalid_data
+
         response_db = self.req_DB.request_title_board(title, board)
         if not response_db:
             return self.stat.card_not_match
+
         collecte_data = [title, board]
         card = response_db[0]
         if status != None:
@@ -448,6 +461,7 @@ class UsingDB:
             collecte_data.append(assignee)
         else:
             collecte_data.append(card[4])
+
         if estimation != None:
             if self.__check_char(estimation):
                 return self.stat.invalid_inp_estim
@@ -455,11 +469,13 @@ class UsingDB:
                 collecte_data.append(estimation)
         else:
             collecte_data.append(card[5])
+
         collecte_data.append(card[6])
         collecte_data.append(card[7])
         collecte_data.append(int(time.time()))
         collecte_data.append(username)
         respons_to_serv = self.req_DB.request_card_update(collecte_data)
+
         if respons_to_serv:
             return self.stat.card_update
         return self.stat.card_not_update
@@ -471,10 +487,13 @@ class UsingDB:
             board = data["board"]
         except KeyError:
             return self.stat.invalid_data
+
         response_db = self.req_DB.request_title_board(title, board)
         if not response_db:
             return self.stat.card_not_exist
+
         response_db_card_delete = self.req_DB.request_card_delete(title, board)
+
         if response_db_card_delete:
             return self.stat.card_delete
         return self.stat.card_not_delete
@@ -487,10 +506,12 @@ class UsingDB:
             assignee = data["assignee"]
         except KeyError:
             return self.stat.invalid_data
+
         response_db = self.req_DB.request_info_column(board, column, assignee)
         self.obj_estim1 = Estimation('0h')
         if not response_db:
             return self.stat.colum_not_info
+            
         response_to_serv = {
                             "board": board,
                             "column": column,
