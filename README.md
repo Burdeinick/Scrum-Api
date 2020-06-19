@@ -63,7 +63,7 @@ It's the example request:
             url = r'http://127.0.0.1:5000/api/v1/board/create'
             headers = {"UserName": "Kop", "UserSecret": "456"}
             data = {
-                    "title": 'Новая доска',
+                    "title": 'New board',
                     "columns": [
                                 "ToDo",
                                 "InProgress",
@@ -78,7 +78,7 @@ It's the example request:
         def board_delete():
             url = r'http://127.0.0.1:5000/api/v1/board/delete'
             headers = {"UserName": "Kop", "UserSecret": "456"}
-            data = {"title": "Новая доска"}
+            data = {"title": "New board"}
             requests.post(url, json=data, headers=headers)
 
 
@@ -113,12 +113,12 @@ It's the example request:
             url = r'http://127.0.0.1:5000/api/v1/card/create'
             headers = {"UserName": "Kop", "UserSecret": "456"}
             data = {
-                    "title": "Карточка 3",
-                    "board": "Новая доска",
-                    "status": "Todo",
-                    "description": "To do all the tasks",
-                    "assignee": "Bob",
-                    "estimation": "1m"
+                    "title": "Card 1",
+                    "board": "New board",
+                    "status": "Noooo",
+                    "description": "Need to check",
+                    "assignee": "Username",
+                    "estimation": "4w"
                     }
             requests.post(url, json=data, headers=headers) 
 
@@ -130,12 +130,9 @@ It's the example request:
             url = r'http://127.0.0.1:5000/api/v1/card/update'
             headers = {"UserName": "Kop", "UserSecret": "456"}
             data = {
-                    "title": "Карточка 1",
-                    "board": "Новая доска",
+                    "title": "Card 1",
+                    "board": "New board",
                     "status": "ToDo",
-                    "description": "New description",
-                    "assignee": "Bob",
-                    "estimation": "7p"
                     }
             requests.post(url, json=data, headers=headers) 
 
@@ -147,10 +144,9 @@ It's the example request:
             url = r'http://127.0.0.1:5000/api/v1/card/delete'
             headers = {"UserName": "Kop", "UserSecret": "456"}
             data = {
-                    "title": "Карточка 1",
-                    "board": "Новая доска",
-                    "status": "ToDo",
-                    }
+                    "title": "Card 1",
+                    "board": "New board"
+                  }
             requests.post(url, json=data, headers=headers) 
 
 ### Column report:
@@ -161,8 +157,8 @@ It's the example request:
             url = r'http://127.0.0.1:5000/api/v1/report/cards_by_column'
             headers = {"UserName": "Kop", "UserSecret": "456"}
             data = {
-                    "board": "Новая доска",
+                    "board": "New board",
                     "column": "ToDo",
-                    "assignee": "Username"
+                    "assignee": "Other name"
                     }
             requests.post(url, json=data, headers=headers) 
