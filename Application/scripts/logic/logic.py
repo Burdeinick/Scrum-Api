@@ -448,20 +448,20 @@ class UsingDB:
 
         collecte_data = [title, board]
         card = response_db[0]
-        if status != None:
+        if status:
             collecte_data.append(status)
         else:
             collecte_data.append(card[2])
-        if description != None:
+        if description:
             collecte_data.append(description)
         else:
             collecte_data.append(card[3])
-        if assignee != None:
+        if assignee:
             collecte_data.append(assignee)
         else:
             collecte_data.append(card[4])
 
-        if estimation != None:
+        if estimation:
             if self.__check_char(estimation):
                 return self.stat.invalid_inp_estim
             else:
